@@ -3,7 +3,7 @@ import { createPromotionSlides } from "./HomePromoBanner";
 import type { Product } from "@shared/commerce/types";
 
 const product = (overrides: Partial<Product> = {}): Product => ({
-  id: "product-1", handle: "navy-co-ord", title: "Navy Co-ord", description: "", descriptionHtml: "", productType: "Apparel", vendor: "ALRAHEEM", tags: ["New In"], images: [], priceRange: { min: { amount: "4950", currencyCode: "PKR" }, max: { amount: "4950", currencyCode: "PKR" } }, options: [], variants: [{ id: "variant-1", title: "Default Title", price: { amount: "4950", currencyCode: "PKR" }, compareAtPrice: null, availableForSale: true, selectedOptions: [] }], ...overrides,
+  id: "product-1", handle: "collection-piece", title: "Collection Piece", description: "", descriptionHtml: "", productType: "Jewellery", vendor: "ALRAHEEM", tags: ["New In"], images: [], priceRange: { min: { amount: "4950", currencyCode: "PKR" }, max: { amount: "4950", currencyCode: "PKR" } }, options: [], variants: [{ id: "variant-1", title: "Default Title", price: { amount: "4950", currencyCode: "PKR" }, compareAtPrice: null, availableForSale: true, selectedOptions: [] }], ...overrides,
 });
 
 describe("createPromotionSlides", () => {

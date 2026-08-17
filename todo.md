@@ -28,3 +28,11 @@
 - [x] Confirm the live banner destination resolves to the matching product page.
 - [x] Add a deterministic empty-catalogue fallback test for promotional content.
 - [x] Save and deliver the dynamic homepage banner update.
+- [x] Map the supplied imagery to JEWELLERY, HANDBAGS, LADIES SUIT, MENS SUIT, BRANDED KARA, BRIDAL SETS, and MENS BRACELET.
+- [x] Remove all current mock products from the connected live catalogue.
+- [x] Replace all existing storefront categories and navigation labels with the seven requested categories.
+- [x] Build an image-led seven-category homepage and empty-category browsing experience.
+- [x] Verify categories, empty catalogue states, navigation, and responsive layouts.
+- [x] Save and deliver the category-led storefront update.
+- [x] Replace legacy promotional copy and category links that point to removed catalogue sections.
+- [x] Update and run unit coverage for the fixed seven-category navigation configuration.
