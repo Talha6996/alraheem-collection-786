@@ -84,3 +84,7 @@ Desktop and mobile visual checks confirm the split hero, collection filters, pro
 The final brand verification confirms that the exact user-supplied circular ALRAHEEM COLLECTION 786 logo is used prominently in the header, hero, collection note, and footer. Motion uses small entrance, hover, and tactile transitions, with a dedicated reduced-motion fallback for accessibility.
 
 The rendered storefront source was audited for the former substitute logo path and wordmark-only brand classes; no remaining matches were found. The motion layer was also reviewed in the stylesheet: logo, hero, category, product-card, and button motion runs only when reduced motion is not requested, and the reduced-motion rule suppresses nonessential animation and transitions.
+
+The dynamic promotional banner was verified at desktop and mobile widths. It renders the live new-arrival product with its actual PKR price and product link; it remains a single truthful new-arrival promotion until a product has a genuine higher compare-at price, at which point a sale slide is added automatically. The compact mobile layout preserves readable copy, a visible action, product imagery, and slide controls.
+
+The live promotional destination `/product/navy-satin-co-ord` was confirmed in the storefront preview: it resolves to the Navy Satin Co-ord detail page, with the correct PKR 4,950 price and its direct ordering actions. Empty-catalogue behavior is covered by a deterministic unit test; the banner does not fabricate content when no live products are available.

@@ -22,3 +22,9 @@
 - [x] Audit rendered storefront code for removed substitute logo paths and wordmark-only treatments.
 - [x] Verify animation declarations and reduced-motion safeguards in the stylesheet.
 - [x] Save and deliver the exact-logo and animation update.
+- [x] Define catalogue tags and pricing rules for dynamic new-arrival and sale banner content.
+- [x] Build a homepage promotional banner that cycles through live new-arrival and sale offers.
+- [x] Verify the banner’s product links, fallback state, animations, and mobile layout.
+- [x] Confirm the live banner destination resolves to the matching product page.
+- [x] Add a deterministic empty-catalogue fallback test for promotional content.
+- [x] Save and deliver the dynamic homepage banner update.
