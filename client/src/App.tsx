@@ -4,13 +4,26 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import StoreShell from "./components/StoreShell";
+import Bag from "./pages/Bag";
+import Contact from "./pages/Contact";
 import Home from "./pages/Home";
-
+import ProductDetail from "./pages/ProductDetail";
+import Shop from "./pages/Shop";
+import TrackOrder from "./pages/TrackOrder";
+import Wishlist from "./pages/Wishlist";
 
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/shop"} component={Shop} />
+      <Route path={"/product/:handle"} component={ProductDetail} />
+      <Route path={"/bag"} component={Bag} />
+      <Route path={"/wishlist"} component={Wishlist} />
+      <Route path={"/track-order"} component={TrackOrder} />
+      <Route path={"/contact"} component={Contact} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -32,7 +45,9 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <StoreShell>
+            <Router />
+          </StoreShell>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
