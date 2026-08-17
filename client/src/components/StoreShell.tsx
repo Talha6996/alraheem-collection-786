@@ -1,10 +1,10 @@
 import { type ReactNode, useState } from "react";
-import { ArrowRight, Heart, Menu, PackageCheck, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { ArrowRight, Heart, Menu, MessageCircle, PackageCheck, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
-import { formatMoney } from "@/lib/commerce";
+import { createCartOrderUrl, formatMoney } from "@/lib/commerce";
 
 const LOGO = "/manus-storage/alraheem-brand-symbol_600f6855.png";
 
@@ -57,7 +57,7 @@ function CartDrawer() {
             </article>
           )) : <div className="flex h-full min-h-80 flex-col items-center justify-center text-center"><ShoppingBag size={28} className="mb-4 text-[#bb492d]" /><h3 className="font-serif text-3xl text-[#123f72]">Your bag is quiet.</h3><p className="mt-3 max-w-[230px] text-sm leading-6 text-slate-500">Find a piece that feels like yours in the latest edit.</p><Link href="/shop" onClick={closeCart} className="mt-6 text-[10px] font-extrabold uppercase tracking-[.14em] text-[#123f72] underline underline-offset-4">Browse the collection</Link></div>}
         </div>
-        {cart?.items.length ? <div className="border-t border-[#d8d0c2] bg-[#f5f1e9] p-6"><div className="mb-4 flex justify-between text-sm font-bold text-[#123f72]"><span>Subtotal</span><span>{formatMoney(cart.subtotal)}</span></div><Link href="/bag" onClick={closeCart} className="mb-3 block text-center text-[10px] font-extrabold uppercase tracking-[.14em] text-[#123f72] underline underline-offset-4">View full bag</Link><button type="button" onClick={proceedToCheckout} className="button-primary w-full justify-center" disabled={loading}>Secure checkout <ArrowRight size={14} /></button></div> : null}
+        {cart?.items.length ? <div className="border-t border-[#d8d0c2] bg-[#f5f1e9] p-6"><div className="mb-4 flex justify-between text-sm font-bold text-[#123f72]"><span>Subtotal</span><span>{formatMoney(cart.subtotal)}</span></div><Link href="/bag" onClick={closeCart} className="mb-3 block text-center text-[10px] font-extrabold uppercase tracking-[.14em] text-[#123f72] underline underline-offset-4">View full bag</Link><button type="button" onClick={proceedToCheckout} className="button-primary w-full justify-center" disabled={loading}>Secure checkout <ArrowRight size={14} /></button><a className="mt-3 flex min-h-[45px] items-center justify-center gap-2 bg-[#25D366] px-4 text-[10px] font-extrabold uppercase tracking-[.12em] text-[#062e19] transition hover:bg-[#1fb85a]" href={createCartOrderUrl(cart.items, cart.subtotal)} target="_blank" rel="noreferrer"><MessageCircle size={15} /> Order on WhatsApp</a></div> : null}
       </aside>
     </div>
   );
