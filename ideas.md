@@ -80,3 +80,7 @@ The supplied circular **AR** seal is the primary graphic mark. It appears clearl
 ## Verification Log
 
 Desktop and mobile visual checks confirm the split hero, collection filters, product cards, gift composition, newsletter, and footer adapt without visible overflow. The mobile layout uses a compact header, accessible off-canvas navigation, horizontally browsable category cards, and a two-column product edit.
+
+The final brand verification confirms that the exact user-supplied circular ALRAHEEM COLLECTION 786 logo is used prominently in the header, hero, collection note, and footer. Motion uses small entrance, hover, and tactile transitions, with a dedicated reduced-motion fallback for accessibility.
+
+The rendered storefront source was audited for the former substitute logo path and wordmark-only brand classes; no remaining matches were found. The motion layer was also reviewed in the stylesheet: logo, hero, category, product-card, and button motion runs only when reduced motion is not requested, and the reduced-motion rule suppresses nonessential animation and transitions.

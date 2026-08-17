@@ -15,3 +15,10 @@
 - [x] Save and deliver the WhatsApp ordering update.
 - [x] Run the storefront WhatsApp link unit tests and capture mobile bag verification.
 - [x] Save a fresh checkpoint after final WhatsApp ordering verification.
+- [x] Upload and use the exact user-provided circular ALRAHEEM COLLECTION 786 logo in the header, hero, and footer.
+- [x] Remove remaining substitute brand marks and wordmark-only treatments where the supplied logo should appear.
+- [x] Add accessible entrance, hover, and transition animations across the storefront.
+- [x] Verify exact-logo placement and motion on desktop and mobile.
+- [x] Audit rendered storefront code for removed substitute logo paths and wordmark-only treatments.
+- [x] Verify animation declarations and reduced-motion safeguards in the stylesheet.
+- [x] Save and deliver the exact-logo and animation update.
