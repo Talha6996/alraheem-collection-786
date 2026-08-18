@@ -45,5 +45,8 @@
 - [x] Remove the homepage Current favourites section while keeping saved-item navigation available.
 - [x] Add unit coverage confirming the homepage no longer renders the Current favourites section.
 - [x] Verify the shop browsing route alongside product detail, bag, and WhatsApp ordering after the homepage change.
-- [ ] Save a fresh checkpoint after the homepage Current favourites removal.
-- [ ] Deliver the simplification update using the new checkpoint reference.
+- [x] Save a fresh checkpoint after the homepage Current favourites removal.
+- [x] Deliver the simplification update using the new checkpoint reference.
+- [x] Research official Shopify guidance for reviewing shipping rates and delivery profiles.
+- [x] Provide verified step-by-step instructions for adjusting high checkout shipping fees.
+- [ ] Save and deliver the official Shopify shipping-fee guide with source links.
