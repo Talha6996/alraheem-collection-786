@@ -42,3 +42,8 @@
 - [x] Save and deliver the Shopify category-organization update.
 - [x] Assert the live no-sellable-variant state meaningfully before skipping cart mutation.
 - [x] Add deterministic unit coverage for the no-sellable-variant cart-test guard.
+- [x] Remove the homepage Current favourites section while keeping saved-item navigation available.
+- [x] Add unit coverage confirming the homepage no longer renders the Current favourites section.
+- [x] Verify the shop browsing route alongside product detail, bag, and WhatsApp ordering after the homepage change.
+- [ ] Save a fresh checkpoint after the homepage Current favourites removal.
+- [ ] Deliver the simplification update using the new checkpoint reference.
