@@ -36,3 +36,9 @@
 - [x] Save and deliver the category-led storefront update.
 - [x] Replace legacy promotional copy and category links that point to removed catalogue sections.
 - [x] Update and run unit coverage for the fixed seven-category navigation configuration.
+- [x] Create Shopify automatic collections for all seven storefront categories.
+- [x] Verify category collection rules match the storefront product-type filters.
+- [x] Document the Shopify mobile workflow for assigning products to these categories.
+- [x] Save and deliver the Shopify category-organization update.
+- [x] Assert the live no-sellable-variant state meaningfully before skipping cart mutation.
+- [x] Add deterministic unit coverage for the no-sellable-variant cart-test guard.
