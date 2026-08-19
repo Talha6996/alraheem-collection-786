@@ -49,4 +49,13 @@
 - [x] Deliver the simplification update using the new checkpoint reference.
 - [x] Research official Shopify guidance for reviewing shipping rates and delivery profiles.
 - [x] Provide verified step-by-step instructions for adjusting high checkout shipping fees.
-- [ ] Save and deliver the official Shopify shipping-fee guide with source links.
+- [x] Save and deliver the official Shopify shipping-fee guide with source links.
+- [ ] Diagnose the Shopify Storefront API HTTP 403 affecting catalogue queries.
+- [ ] Correct Storefront API authorization without exposing credentials or altering catalogue data.
+- [ ] Remove the Shopify online-store password restriction after user confirmation.
+- [ ] Add or update regression coverage for the authorization failure path.
+- [ ] Verify homepage, shop, and product queries after the authorization fix.
+- [ ] Save and deliver the Storefront API authorization fix.
+- [x] Research current free third-party tools for mobile product management.
+- [x] Compare APK, standalone web-admin, and third-party-tool approaches without starting implementation.
+- [ ] Save and deliver the no-build product-management options guidance.

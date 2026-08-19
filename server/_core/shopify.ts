@@ -33,9 +33,10 @@ import {
 // ---------------------------------------------------------------------------
 
 /**
- * Storefront API version pinned for the whole adapter.
+ * Storefront API version pinned for the whole adapter. Shopify supports stable
+ * versions for a limited period; keep this aligned with the current stable API.
  */
-export const SHOPIFY_API_VERSION = "2025-04";
+export const SHOPIFY_API_VERSION = "2026-07";
 
 /** Lazy env access — tests can override `process.env` before each case. */
 function getShopifyStoreDomain(): string {
