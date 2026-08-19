@@ -58,4 +58,9 @@
 - [ ] Save and deliver the Storefront API authorization fix.
 - [x] Research current free third-party tools for mobile product management.
 - [x] Compare APK, standalone web-admin, and third-party-tool approaches without starting implementation.
-- [ ] Save and deliver the no-build product-management options guidance.
+- [x] Save and deliver the no-build product-management options guidance.
+- [x] Inspect the failed visual-editor hero-image target and validate the supplied replacement asset.
+- [x] Replace the homepage hero image with the user-supplied source through the approved asset workflow.
+- [x] Add or update regression coverage for the homepage hero image.
+- [x] Verify the replacement at desktop and mobile layouts.
+- [ ] Save and deliver the hero-image update checkpoint.

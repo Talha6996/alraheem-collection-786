@@ -30,11 +30,13 @@ vi.mock("wouter", async () => {
 import Home from "./Home";
 
 describe("Home", () => {
-  it("omits the removed Current favourites section while retaining category and editorial paths", () => {
+  it("uses the user-supplied hero image while retaining category and editorial paths", () => {
     const markup = renderToStaticMarkup(createElement(Home));
 
     expect(markup).not.toContain("Current");
     expect(markup).not.toContain("favourites");
+    expect(markup).toContain("/manus-storage/alraheem-hero-user-replacement_4761f1e6.png");
+    expect(markup).toContain('alt="ALRAHEEM COLLECTION 786 fashion collection"');
     expect(markup).toContain("Find your");
     expect(markup).toContain("For the moment");
   });
