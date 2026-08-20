@@ -84,4 +84,8 @@
 - [x] Improve perceived responsiveness with efficient loading states and deferred non-critical work.
 - [x] Add focused regression coverage for the applied performance optimizations.
 - [x] Verify the optimized storefront on desktop and mobile, then run the full test suite and production build.
-- [ ] Save and deliver the storefront performance optimization checkpoint.
+- [x] Save and deliver the storefront performance optimization checkpoint.
+- [x] Audit Manus-dependent runtime services and Shopify configuration needed for external hosting.
+- [x] Verify current Vercel and Netlify deployment requirements for the full-stack storefront.
+- [x] Provide an independent external-hosting checklist that preserves Shopify catalogue, cart, and WhatsApp ordering flows.
+- [ ] Save and deliver the independent external-hosting deployment guide.
