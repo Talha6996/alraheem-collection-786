@@ -109,18 +109,25 @@
 - [x] Capture the exact Shopify 400 response for the Custom App client-credentials request.
 - [x] Revise the local Storefront token-generation workflow for the verified Shopify authentication path.
 - [x] Provide a safe rerun instruction without exposing Custom App credentials.
-- [ ] Guide the owner through adding the generated token to Netlify and testing the external preview safely.
+- [x] Guide the owner through adding the generated token to Netlify and testing the external preview safely.
 - [x] Package the exact logo, hero, and seven category images for owner-controlled Cloudinary upload.
 - [x] Guide the owner through uploading the image package and identifying the public Cloudinary delivery base URL.
 - [x] Configure and validate the final Netlify public asset-base variable for the independent storefront.
-- [ ] Confirm the saved Cloudinary asset-base value in Netlify before deployment.
-- [ ] Verify the deployed storefront loads all branded images from Cloudinary instead of Manus storage.
-- [ ] Record independent asset-delivery verification in the Netlify launch notes.
-- [ ] Guide the owner through repository connection, production deployment, and end-to-end storefront verification.
+- [x] Confirm the saved Cloudinary asset-base value in Netlify before deployment.
+- [x] Verify the deployed storefront loads all branded images from Cloudinary instead of Manus storage.
+- [x] Record independent asset-delivery verification in the Netlify launch notes.
+- [x] Guide the owner through repository connection, production deployment, and end-to-end storefront verification.
 - [x] Fix the Netlify production function bundle so Express is included at runtime.
 - [x] Redeploy and verify the public Shopify commerce endpoint no longer returns HTTP 502.
-- [ ] Correct the Netlify function’s tRPC mount path so live Shopify responses reach the commerce router.
+- [x] Correct the Netlify function’s tRPC mount path so live Shopify responses reach the commerce router.
 - [x] Route Netlify production builds directly to the verified serverless tRPC endpoint so batched query data is preserved.
-- [ ] Wait for the post-routing-fix Netlify deploy, then verify the live batched commerce endpoint returns JSON data.
-- [ ] Confirm the live Branded Kara collection route renders Shopify products rather than the empty state.
-- [ ] Record successful live routing verification in the Netlify production notes.
+- [x] Wait for the post-routing-fix Netlify deploy, then verify the live batched commerce endpoint returns JSON data.
+- [x] Confirm the live Branded Kara collection route renders Shopify products rather than the empty state.
+- [x] Record successful live routing verification in the Netlify production notes.
+- [x] Publish all seven manual Shopify collections so the independent Storefront token can access their collection handles.
+- [x] Verify every required collection handle is visible to the Netlify Storefront API.
+- [x] Verify every live branded asset path (logo, hero, and all seven category images) resolves from Cloudinary and confirm no live asset reference uses `/manus-storage/`.
+- [x] Update the Netlify production notes with completed Cloudinary asset-delivery and live routing verification findings.
+- [x] Confirm the launch notes record that all nine Cloudinary assets resolve and rendered production HTML has zero `/manus-storage/` image references.
+- [x] Verify the live bag, Shopify checkout handoff, and WhatsApp ordering actions using a published product.
+- [ ] Configure an active Shopify payment provider or manual payment method before accepting online checkout payments.
