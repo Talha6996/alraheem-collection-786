@@ -110,3 +110,10 @@
 - [x] Revise the local Storefront token-generation workflow for the verified Shopify authentication path.
 - [x] Provide a safe rerun instruction without exposing Custom App credentials.
 - [ ] Guide the owner through adding the generated token to Netlify and testing the external preview safely.
+- [x] Package the exact logo, hero, and seven category images for owner-controlled Cloudinary upload.
+- [x] Guide the owner through uploading the image package and identifying the public Cloudinary delivery base URL.
+- [x] Configure and validate the final Netlify public asset-base variable for the independent storefront.
+- [ ] Confirm the saved Cloudinary asset-base value in Netlify before deployment.
+- [ ] Verify the deployed storefront loads all branded images from Cloudinary instead of Manus storage.
+- [ ] Record independent asset-delivery verification in the Netlify launch notes.
+- [ ] Guide the owner through repository connection, production deployment, and end-to-end storefront verification.
