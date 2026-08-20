@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getProductByHandle } from "./shopify";
+import { clearProductListCache, getProductByHandle, listProducts } from "./shopify";
 
 describe("Shopify Storefront API authorization errors", () => {
   beforeEach(() => {
@@ -8,6 +8,7 @@ describe("Shopify Storefront API authorization errors", () => {
   });
 
   afterEach(() => {
+    clearProductListCache();
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
   });
@@ -22,5 +23,23 @@ describe("Shopify Storefront API authorization errors", () => {
       code: "INTERNAL_SERVER_ERROR",
       message: "Shopify Storefront API returned HTTP 403",
     });
+  });
+
+  it("keeps a Custom App public Storefront token on the server-side request contract", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ data: { products: { edges: [] } } }), { status: 200 })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(listProducts()).resolves.toEqual([]);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("example.myshopify.com"),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          "X-Shopify-Storefront-Access-Token": "test-storefront-token",
+        }),
+      })
+    );
   });
 });

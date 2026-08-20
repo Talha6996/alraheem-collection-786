@@ -13,7 +13,7 @@ The storefront can remain fully linked to Shopify after migration. Product title
 | Current responsibility | Independent replacement |
 | --- | --- |
 | `SHOPIFY_STORE_DOMAIN` | Your existing `alraheem786-9khraaqr-anchor-cedar-jcs11ees.myshopify.com` domain, stored as a server environment variable. |
-| `SHOPIFY_STOREFRONT_API_ACCESS_TOKEN` | Create a **new Storefront API access token** for the external deployment, with only product-listing and cart/checkout access required by this storefront. Store it only in the function/server environment. |
+| `SHOPIFY_STOREFRONT_API_ACCESS_TOKEN` | Create a **new Custom App public Storefront API access token** for the external deployment with only product-listing, product-tag, and cart/checkout access. The paid Headless channel is not required. Store it only in the function/server environment. |
 | `/api/trpc` commerce routes | Deploy as Vercel Functions or a Netlify Function, preserving the same relative `/api/trpc` path. |
 | Shopify cart and checkout | Retain the existing Storefront API cart calls; no migration of customer carts is needed. |
 | WhatsApp ordering | No Shopify or host change required. |
@@ -96,10 +96,10 @@ Create the Shopify and optional login/database values in **Netlify → Project c
 
 ## Shopify checklist before going live
 
-1. In Shopify Admin, create a **new** Storefront API token dedicated to the external host; never reuse a Manus-managed secret.
-2. Apply least-privilege Storefront access for the product listings and cart/checkout operations that this website uses.
-3. Add the external deployment domain in the relevant Shopify sales-channel or app settings if Shopify prompts for an allowed domain.
-4. Keep all seven manual collections published to the **Manus** channel only while the current Manus site remains live. After the migration is validated, publish them to the channel used by the external storefront, or use the Storefront token configuration that exposes the collections required by the new site.
+1. In Shopify Dev Dashboard, create a **Custom App** dedicated to the external host; never reuse a Manus-managed secret.
+2. Request only `unauthenticated_read_product_listings`, `unauthenticated_read_product_tags`, `unauthenticated_read_checkouts`, and `unauthenticated_write_checkouts`, then generate a public Storefront token through `storefrontAccessTokenCreate`.
+3. Add the external deployment domain in the relevant Shopify app settings if Shopify prompts for an allowed domain.
+4. Keep all seven manual collections published to **Manus** while the current site remains live. The Custom App token accesses the same published product and collection data; a paid Headless storefront publication is not needed.
 5. Test a real cart and checkout with a low-risk product before announcing the new domain.
 
 ## Safe cutover sequence

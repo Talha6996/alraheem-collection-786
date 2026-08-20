@@ -95,6 +95,11 @@
 - [x] Isolate or remove Manus-only deployment configuration from the Netlify build path.
 - [x] Add Netlify environment-variable and asset-migration documentation without embedding secrets.
 - [x] Validate the Netlify-ready package with tests, production build, and configuration checks.
-- [ ] Save and deliver the Netlify-prepared storefront checkpoint.
+- [x] Save and deliver the Netlify-prepared storefront checkpoint.
+- [x] Verify Shopify Custom App Storefront API token requirements for the Netlify storefront.
+- [x] Replace Headless-channel setup instructions with the Custom App Storefront API method.
+- [x] Confirm the Netlify Shopify domain and token variable contract remains unchanged.
+- [x] Validate product, collection, cart, checkout, and WhatsApp behavior remains covered after the setup-method change.
+- [ ] Save and deliver the Custom App Netlify setup update.
 - [x] Add Netlify-path regression coverage for product queries and cart contract behavior through the serverless adapter.
 - [x] Verify and document that checkout and WhatsApp order links remain unchanged in the Netlify-prepared storefront.

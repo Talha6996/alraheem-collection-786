@@ -46,7 +46,7 @@ describe("shopify cart candidate selection", () => {
 describe.skipIf(!configured)("shopify smoke (live)", () => {
   it(
     "returns an empty catalogue cleanly or a product with title, image, and non-zero price",
-    { timeout: 30_000 },
+    { timeout: 45_000 },
     async () => {
     const products = await listProducts({ first: 10 });
 

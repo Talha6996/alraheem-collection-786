@@ -6,7 +6,7 @@ The source code now includes a Netlify Function at `netlify/functions/api.ts`, a
 
 The Netlify function contract, storefront Shopify regression tests, TypeScript check, standard production build, and Netlify-targeted production build all passed during preparation. Focused Netlify function tests exercised the public product-list and cart-create procedures through `/.netlify/functions/api/trpc`, verified the normalized Shopify checkout handoff, and confirmed that the WhatsApp direct-order URL remains unchanged. The locally running storefront was also visually verified on the homepage and the `BRANDED KARA` collection page, which continued to show its two Shopify products.
 
-This validates the code package; it is not a live Netlify deployment. The owner must still create the Netlify project, create a fresh Shopify Storefront API token, upload the listed branded assets to owner-controlled storage, and enter the required environment variables before the external preview can be tested.
+This validates the code package; it is not a live Netlify deployment. The owner must still create the Netlify project, create a fresh Shopify **Custom App public Storefront API token** without the Headless channel, upload the listed branded assets to owner-controlled storage, and enter the required environment variables before the external preview can be tested.
 
 ## What has not changed
 
@@ -27,7 +27,7 @@ Set these values in **Netlify → Project configuration → Environment variable
 | Variable | Required | Value source |
 | --- | --- | --- |
 | `SHOPIFY_STORE_DOMAIN` | Yes | Your existing Shopify `*.myshopify.com` domain. |
-| `SHOPIFY_STOREFRONT_API_ACCESS_TOKEN` | Yes | A new, least-privilege Shopify Storefront API token created specifically for Netlify. |
+| `SHOPIFY_STOREFRONT_API_ACCESS_TOKEN` | Yes | A new, least-privilege **Custom App public Storefront API token** created specifically for Netlify; the paid Headless channel is not required. |
 | `VITE_STOREFRONT_ASSET_BASE_URL` | Yes for an independent launch | A folder URL you control that holds the branded asset files listed below. |
 | `NODE_VERSION` | Recommended | `22` to match this project’s Node runtime. |
 
@@ -58,4 +58,6 @@ For example, if the files are in `https://cdn.example.com/alraheem`, set `VITE_S
 5. Verify the new external asset URLs load in browser developer tools and that no `/manus-storage/` image request remains.
 6. Attach the custom domain in Netlify and update DNS only after the preview checks pass.
 
-> The Shopify Storefront token must remain server-only. Never use a `VITE_` prefix for that token. Only `VITE_STOREFRONT_ASSET_BASE_URL` is public because browsers need it to load public image files.
+> Create the token with the Custom App’s `storefrontAccessTokenCreate` flow, selecting only `unauthenticated_read_product_listings`, `unauthenticated_read_product_tags`, `unauthenticated_read_checkouts`, and `unauthenticated_write_checkouts`. The token must remain server-only. Never use a `VITE_` prefix for it. Only `VITE_STOREFRONT_ASSET_BASE_URL` is public because browsers need it to load public image files.
+
+The generated public Storefront token is compatible with the existing `SHOPIFY_STOREFRONT_API_ACCESS_TOKEN` variable and the existing server-side `X-Shopify-Storefront-Access-Token` request header. No product, collection, cart, checkout, price, inventory, or WhatsApp code needs to change for the Custom App method.
