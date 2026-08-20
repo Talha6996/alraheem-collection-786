@@ -8,6 +8,12 @@
 - The authenticated Shopify Admin homepage shows **Unlock your online store** and states that the store is password-protected until it is ready to go live. This prevents normal public-store access and is the outstanding store-level restriction to remove.
 - The same homepage shows the Manus project domain `alraheem786-9khraaqr.manus.space` as the storefront destination; the application itself remains the intended customer-facing site.
 
+## Current status
+
+The Storefront API is currently responding normally to the application. Live checks confirmed that the homepage catalogue feed, the `BRANDED KARA` manual-collection filter, and the `white-stone-kara` product-detail query all return data without an HTTP 403 response. The seven category collections were also published to the **Manus** channel, which is required for collection-scoped Storefront API results.
+
+The Shopify Online Store password setting was **not** changed. It is no longer required for the Manus headless storefront’s API-backed catalogue flow, so no paid-plan activation or password removal was performed in this update.
+
 ## Code hardening
 
 The storefront adapter was moved from the retired `2025-04` Storefront API version to the current stable `2026-07` version. Shopify says Storefront API versions are supported for a minimum of 12 months and requests to inaccessible versions fall forward; production storefronts should specify a currently supported stable version.

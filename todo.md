@@ -50,11 +50,11 @@
 - [x] Research official Shopify guidance for reviewing shipping rates and delivery profiles.
 - [x] Provide verified step-by-step instructions for adjusting high checkout shipping fees.
 - [x] Save and deliver the official Shopify shipping-fee guide with source links.
-- [ ] Diagnose the Shopify Storefront API HTTP 403 affecting catalogue queries.
-- [ ] Correct Storefront API authorization without exposing credentials or altering catalogue data.
-- [ ] Remove the Shopify online-store password restriction after user confirmation.
-- [ ] Add or update regression coverage for the authorization failure path.
-- [ ] Verify homepage, shop, and product queries after the authorization fix.
+- [x] Diagnose the Shopify Storefront API HTTP 403 affecting catalogue queries.
+- [x] Restore Storefront catalogue access without exposing credentials or altering catalogue data.
+- [x] Confirm that the Shopify Online Store password does not need to be removed for the Manus headless storefront flow.
+- [x] Add deterministic regression coverage for the authorization failure path.
+- [x] Verify homepage, shop, and product queries after the authorization recovery.
 - [ ] Save and deliver the Storefront API authorization fix.
 - [x] Research current free third-party tools for mobile product management.
 - [x] Compare APK, standalone web-admin, and third-party-tool approaches without starting implementation.
@@ -76,5 +76,6 @@
 - [ ] Save and deliver the manual collection-management update.
 - [x] Align website category filtering with Shopify manual collection membership and add regression coverage.
 - [x] Verify a manually assigned collection is reflected in the corresponding website category once Storefront API access is restored.
-- [ ] Save a checkpoint capturing the responsive hero fix, manual collections, Manus publication, collection-based filtering, documentation, and regression coverage.
+- [x] Save a checkpoint capturing the responsive hero fix, manual collections, Manus publication, collection-based filtering, documentation, and regression coverage.
 - [ ] Deliver the manual collection workflow, Manus publication status, collection-based filtering, responsive hero fix, and checkpoint reference.
+- [ ] Save a final checkpoint containing the Storefront recovery documentation and authorization regression test.
