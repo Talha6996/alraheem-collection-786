@@ -130,4 +130,6 @@
 - [x] Update the Netlify production notes with completed Cloudinary asset-delivery and live routing verification findings.
 - [x] Confirm the launch notes record that all nine Cloudinary assets resolve and rendered production HTML has zero `/manus-storage/` image references.
 - [x] Verify the live bag, Shopify checkout handoff, and WhatsApp ordering actions using a published product.
-- [ ] Configure an active Shopify payment provider or manual payment method before accepting online checkout payments.
+- [x] Configure an active Shopify payment provider or manual payment method before accepting online checkout payments.
+- [x] Enable Cash on Delivery as the owner-approved Shopify manual payment method.
+- [x] Verify Cash on Delivery appears in the live Shopify checkout without placing an order.

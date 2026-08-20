@@ -65,3 +65,9 @@ On the live product page for `rectangle-white-stone-kara-bangle`, selecting **AD
 ## Approved Shopify checkout handoff test
 
 With owner approval, the shopping-bag **SECURE CHECKOUT** action opened Shopify checkout for the correct product, quantity of 1, and PKR 2,250 item price. No contact, address, delivery, or payment information was entered and no order was submitted. Shopify checkout currently displays the notice **“This store can’t accept payments right now.”** The storefront-to-checkout handoff is therefore working, but accepting card or online payments requires the store owner to configure an active payment provider in Shopify. WhatsApp ordering remains available for manual order confirmation.
+
+## Cash on Delivery activation and checkout verification
+
+At the owner’s request, **Cash on Delivery (COD)** was enabled in Shopify under Manual payment methods. The live Shopify checkout was reopened without entering customer information or submitting an order. It now displays `Cash on Delivery (COD)` in the Payment section for the published Rectangle white stone Kara Bangle, confirming that the store can accept manual-payment orders.
+
+The test checkout currently presents one available shipping method at **PKR 4,619** and estimated taxes of **PKR 360**. These are Shopify shipping and tax settings, not Netlify charges. Review these business settings before accepting customer orders if the amounts are not intentional.
