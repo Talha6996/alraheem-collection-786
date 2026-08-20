@@ -3,11 +3,12 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import HomePromoBanner from "@/components/HomePromoBanner";
 import { useCatalogueProducts } from "@/hooks/useCatalogueProducts";
+import { storefrontAsset } from "@/lib/storeAssets";
 import { STORE_CATEGORIES } from "@/lib/storeCategories";
 
 const assets = {
-  logo: "/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png",
-  hero: "/manus-storage/alraheem-hero-user-replacement_4761f1e6.png",
+  logo: storefrontAsset("/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png"),
+  hero: storefrontAsset("/manus-storage/alraheem-hero-user-replacement_4761f1e6.png"),
 };
 
 export default function Home() {

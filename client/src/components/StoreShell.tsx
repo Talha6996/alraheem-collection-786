@@ -5,9 +5,10 @@ import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { createCartOrderUrl, formatMoney } from "@/lib/commerce";
+import { storefrontAsset } from "@/lib/storeAssets";
 import { STORE_CATEGORIES } from "@/lib/storeCategories";
 
-const LOGO = "/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png";
+const LOGO = storefrontAsset("/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png");
 const navigation = STORE_CATEGORIES.map(category => [category.name, category.href] as const);
 
 function CartDrawer() {

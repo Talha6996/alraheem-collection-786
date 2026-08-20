@@ -88,4 +88,13 @@
 - [x] Audit Manus-dependent runtime services and Shopify configuration needed for external hosting.
 - [x] Verify current Vercel and Netlify deployment requirements for the full-stack storefront.
 - [x] Provide an independent external-hosting checklist that preserves Shopify catalogue, cart, and WhatsApp ordering flows.
-- [ ] Save and deliver the independent external-hosting deployment guide.
+- [x] Save and deliver the independent external-hosting deployment guide.
+- [x] Audit the current server, storefront API, asset, and route dependencies before Netlify preparation.
+- [x] Add a Netlify serverless adapter and route rewrites while retaining the existing `/api/trpc` commerce contract.
+- [x] Preserve Shopify catalogue, manual collection, cart, checkout, and WhatsApp behavior with regression coverage.
+- [x] Isolate or remove Manus-only deployment configuration from the Netlify build path.
+- [x] Add Netlify environment-variable and asset-migration documentation without embedding secrets.
+- [x] Validate the Netlify-ready package with tests, production build, and configuration checks.
+- [ ] Save and deliver the Netlify-prepared storefront checkpoint.
+- [x] Add Netlify-path regression coverage for product queries and cart contract behavior through the serverless adapter.
+- [x] Verify and document that checkout and WhatsApp order links remain unchanged in the Netlify-prepared storefront.
