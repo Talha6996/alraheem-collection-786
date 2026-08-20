@@ -133,3 +133,8 @@
 - [x] Configure an active Shopify payment provider or manual payment method before accepting online checkout payments.
 - [x] Enable Cash on Delivery as the owner-approved Shopify manual payment method.
 - [x] Verify Cash on Delivery appears in the live Shopify checkout without placing an order.
+- [x] Inspect the current Shopify shipping profile, Pakistan zone, and active checkout rates.
+- [x] Identify the source of the PKR 4,619 checkout rate and define the owner-approved PKR 250 flat nationwide replacement.
+- [x] Obtain owner approval for the proposed Pakistan delivery-rate rules before changing Shopify settings.
+- [x] Apply the approved Shopify shipping-rate configuration without changing products or Cash on Delivery.
+- [ ] Verify the live checkout presents the corrected delivery amount after a valid customer address is entered.

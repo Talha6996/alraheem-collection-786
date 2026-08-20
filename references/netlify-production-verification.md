@@ -71,3 +71,17 @@ With owner approval, the shopping-bag **SECURE CHECKOUT** action opened Shopify 
 At the owner’s request, **Cash on Delivery (COD)** was enabled in Shopify under Manual payment methods. The live Shopify checkout was reopened without entering customer information or submitting an order. It now displays `Cash on Delivery (COD)` in the Payment section for the published Rectangle white stone Kara Bangle, confirming that the store can accept manual-payment orders.
 
 The test checkout currently presents one available shipping method at **PKR 4,619** and estimated taxes of **PKR 360**. These are Shopify shipping and tax settings, not Netlify charges. Review these business settings before accepting customer orders if the amounts are not intentional.
+
+## Shipping investigation in progress
+
+The production checkout exposes a single Pakistan shipping method at PKR 4,619 before a city or postal code has been entered. This identifies the amount as the current Shopify delivery-zone/rate configuration rather than a charge introduced by Netlify or Cash on Delivery. The Shopify Shipping and delivery settings page has been opened for inspection; detailed rate controls are still loading in the connected browser.
+
+After a refresh, Shopify showed one General profile covering all products, one fulfilment location, and two delivery zones. The General profile editor is now open for zone-level inspection.
+
+The Domestic Pakistan zone contains a single flat `معیاری` (standard) rate of **PKR 4,619** with a displayed transit time of 3–5 business days. Shopify’s official guidance distinguishes merchant-set flat rates from carrier or app-calculated rates. Flat rates can be fixed or vary by order amount or product weight; carrier-calculated rates use order weight, dimensions, and destination, but Shopify currently limits third-party carrier-calculated shipping to Advanced, Plus, or eligible Grow plans with an additional fee. Sources: [Shopify: Setting up shipping zones and rates](https://help.shopify.com/en/manual/fulfillment/setup/shipping-rates/setting-up-shipping-rates) and [Shopify: Third-party carrier-calculated shipping](https://help.shopify.com/en/manual/fulfillment/setup/shipping-rates/third-party-carrier-calculated-shipping).
+
+## Approved Pakistan delivery-rate correction
+
+The owner approved a **PKR 250 delivery charge across Pakistan**. The active Domestic-zone rate was identified as Shopify Delivery Method Definition `906517446870`; it was a flat PKR 4,619 rate. The Shopify `deliveryProfileUpdate` response confirms that the same active domestic method now has a flat price of **PKR 250.00**, with no update errors. The international rate, products, collection setup, and Cash on Delivery configuration were not changed.
+
+The browser session could not reopen an expired synthetic checkout cart for a rendered-price screenshot. A fresh checkout refresh in the owner’s browser is still required to visually confirm the PKR 250 price after the customer has selected Pakistan and entered a delivery address.
