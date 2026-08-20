@@ -118,4 +118,8 @@
 - [ ] Record independent asset-delivery verification in the Netlify launch notes.
 - [ ] Guide the owner through repository connection, production deployment, and end-to-end storefront verification.
 - [x] Fix the Netlify production function bundle so Express is included at runtime.
-- [ ] Redeploy and verify the public Shopify commerce endpoint no longer returns HTTP 502.
+- [x] Redeploy and verify the public Shopify commerce endpoint no longer returns HTTP 502.
+- [ ] Correct the Netlify function’s tRPC mount path so live Shopify responses reach the commerce router.
+- [ ] Wait for the post-routing-fix Netlify deploy, then verify the live batched commerce endpoint returns JSON data.
+- [ ] Confirm the live Branded Kara collection route renders Shopify products rather than the empty state.
+- [ ] Record successful live routing verification in the Netlify production notes.

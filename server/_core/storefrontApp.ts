@@ -11,6 +11,7 @@ import { createStorefrontContext } from "./storefrontContext";
 export const STOREFRONT_TRPC_PATHS = [
   "/api/trpc",
   "/.netlify/functions/api/trpc",
+  "/trpc",
 ];
 
 function addBodyParsers(app: express.Express) {

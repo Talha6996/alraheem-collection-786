@@ -64,6 +64,7 @@ describe("Netlify storefront adapter", () => {
     expect(STOREFRONT_TRPC_PATHS).toEqual([
       "/api/trpc",
       "/.netlify/functions/api/trpc",
+      "/trpc",
     ]);
     expect(app.locals.storefrontTrpcPaths).toEqual(STOREFRONT_TRPC_PATHS);
   });
@@ -89,7 +90,7 @@ describe("Netlify storefront adapter", () => {
     expect(appSource).not.toContain("../routers\"");
   });
 
-  it("serves the Shopify product-list contract through the Netlify function path", async () => {
+  it("serves the Shopify product-list contract through Netlify's stripped function path", async () => {
     ok({
       products: {
         edges: [
@@ -117,7 +118,7 @@ describe("Netlify storefront adapter", () => {
     });
 
     const result = await handler(
-      netlifyEvent("/.netlify/functions/api/trpc/commerce.products.list", "GET", {})
+      netlifyEvent("/trpc/commerce.products.list", "GET", {})
     );
 
     if (result.statusCode !== 200) throw new Error(result.body);
