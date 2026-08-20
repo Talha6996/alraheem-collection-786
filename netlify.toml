@@ -3,6 +3,9 @@
   publish = "dist/public"
   functions = "netlify/functions"
 
+[build.environment]
+  VITE_NETLIFY_FUNCTIONS = "true"
+
 [functions]
   node_bundler = "esbuild"
 

@@ -24,4 +24,10 @@ Netlify automatically detected the correction from the connected `main` branch a
 
 After the dependency correction deployed, the live endpoint returned HTTP 200 but an empty body. Netlify strips `/.netlify/functions/api` from the request path before handing it to the Express adapter, so the function receives `/trpc/...`. The public Shopify router is now mounted at `/trpc` as well as the local and direct function paths. Automated coverage now exercises this stripped production path; the focused adapter test, full suite (29 passed, 1 skipped), and Netlify production build all passed. A final automatic deployment will publish this routing correction for live verification.
 
+Netlify detected the routing correction and started the final production deploy `main@0ee540c`; at the latest check it was uploading, while the preceding dependency fix `main@27be993` was published.
+
+## Batched-query delivery correction
+
+Direct requests to `/.netlify/functions/api/trpc/commerce.products.list` returned the expected JSON body, while the public `/api/trpc/...` redirect produced an empty body. The deployed client now selects the direct function endpoint only in Netlify builds through `VITE_NETLIFY_FUNCTIONS=true`, configured in `netlify.toml`. Local and Manus builds keep `/api/trpc`. The unit suite now has 31 passing tests and 1 skipped test, and a Netlify-configured production build was inspected to confirm the direct endpoint is embedded in the generated client bundle. Final live verification is pending the automatic redeploy.
+
 Further verification remains required for the seven category images, Shopify catalogue requests, bag flow, checkout hand-off, WhatsApp ordering link, and mobile rendering.

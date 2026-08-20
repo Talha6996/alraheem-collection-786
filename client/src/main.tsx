@@ -6,6 +6,7 @@ import superjson from "superjson";
 import App from "./App";
 import { CartProvider } from "./contexts/CartContext";
 import "./index.css";
+import { getStorefrontTrpcEndpoint } from "./lib/trpcEndpoint";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +24,9 @@ const queryClient = new QueryClient({
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "/api/trpc",
+      url: getStorefrontTrpcEndpoint(
+        import.meta.env.VITE_NETLIFY_FUNCTIONS === "true"
+      ),
       transformer: superjson,
       fetch(input, init) {
         return globalThis.fetch(input, {
