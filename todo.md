@@ -117,3 +117,5 @@
 - [ ] Verify the deployed storefront loads all branded images from Cloudinary instead of Manus storage.
 - [ ] Record independent asset-delivery verification in the Netlify launch notes.
 - [ ] Guide the owner through repository connection, production deployment, and end-to-end storefront verification.
+- [x] Fix the Netlify production function bundle so Express is included at runtime.
+- [ ] Redeploy and verify the public Shopify commerce endpoint no longer returns HTTP 502.
