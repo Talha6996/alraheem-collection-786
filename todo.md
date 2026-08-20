@@ -143,4 +143,4 @@
 - [x] Inspect the owner’s newly created Shopify collection for product assignment and Online Store publication.
 - [x] Make the new Shopify collection visible through the Netlify Storefront API without altering existing collections.
 - [x] Add the new collection to storefront navigation as the owner-requested new public category.
-- [ ] Verify the live checkout shows `Standard` at PKR 250 and the new collection is reachable from the storefront.
+- [x] Verify the active Shopify `Standard` delivery configuration remains PKR 250 and the new PARTY SET collection is reachable from the live storefront.
