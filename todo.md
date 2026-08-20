@@ -137,4 +137,10 @@
 - [x] Identify the source of the PKR 4,619 checkout rate and define the owner-approved PKR 250 flat nationwide replacement.
 - [x] Obtain owner approval for the proposed Pakistan delivery-rate rules before changing Shopify settings.
 - [x] Apply the approved Shopify shipping-rate configuration without changing products or Cash on Delivery.
-- [ ] Verify the live checkout presents the corrected delivery amount after a valid customer address is entered.
+- [x] Verify the live checkout presents the corrected delivery amount after a valid customer address is entered.
+- [x] Record the screenshot-confirmed PKR 250 delivery amount in the launch notes.
+- [x] Rename the active Shopify Pakistan delivery method from `معیاری` to `Standard` without changing its PKR 250 price.
+- [x] Inspect the owner’s newly created Shopify collection for product assignment and Online Store publication.
+- [x] Make the new Shopify collection visible through the Netlify Storefront API without altering existing collections.
+- [x] Add the new collection to storefront navigation as the owner-requested new public category.
+- [ ] Verify the live checkout shows `Standard` at PKR 250 and the new collection is reachable from the storefront.

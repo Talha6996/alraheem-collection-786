@@ -72,6 +72,15 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     sourceFile: "pasted_file_aRx2FQ_image.png",
     position: "object-center",
   },
+  {
+    name: "PARTY SET",
+    collectionHandle: "party-set",
+    productType: "Party Set",
+    href: "/shop?category=party-set",
+    image: "https://cdn.shopify.com/s/files/1/0836/8357/3974/collections/rn-image_picker_lib_temp_cb53c215-6283-4cc3-ae29-35f9c3866b0a.jpg?v=1787210823",
+    sourceFile: "Shopify collection image",
+    position: "object-center",
+  },
 ];
 
 export function findStoreCategory(value: string) {

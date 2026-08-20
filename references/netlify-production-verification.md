@@ -85,3 +85,5 @@ The Domestic Pakistan zone contains a single flat `معیاری` (standard) rate
 The owner approved a **PKR 250 delivery charge across Pakistan**. The active Domestic-zone rate was identified as Shopify Delivery Method Definition `906517446870`; it was a flat PKR 4,619 rate. The Shopify `deliveryProfileUpdate` response confirms that the same active domestic method now has a flat price of **PKR 250.00**, with no update errors. The international rate, products, collection setup, and Cash on Delivery configuration were not changed.
 
 The browser session could not reopen an expired synthetic checkout cart for a rendered-price screenshot. A fresh checkout refresh in the owner’s browser is still required to visually confirm the PKR 250 price after the customer has selected Pakistan and entered a delivery address.
+
+The owner refreshed a live Shopify checkout and provided the rendered confirmation. The shipping method shows the updated PKR 250 charge alongside Cash on Delivery, which verifies that the corrected Pakistan rate is live. The remaining requested change is to rename this delivery method from its Urdu label to `Standard` without changing the PKR 250 amount.
