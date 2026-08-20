@@ -100,6 +100,13 @@
 - [x] Replace Headless-channel setup instructions with the Custom App Storefront API method.
 - [x] Confirm the Netlify Shopify domain and token variable contract remains unchanged.
 - [x] Validate product, collection, cart, checkout, and WhatsApp behavior remains covered after the setup-method change.
-- [ ] Save and deliver the Custom App Netlify setup update.
+- [x] Save and deliver the Custom App Netlify setup update.
+- [x] Verify the current Shopify Dev Dashboard API-access screen and supported public Storefront token path.
+- [x] Correct the owner instructions for the current Custom App interface and exact next clicks.
+- [x] Deliver the updated no-Headless Shopify Custom App walkthrough.
 - [x] Add Netlify-path regression coverage for product queries and cart contract behavior through the serverless adapter.
 - [x] Verify and document that checkout and WhatsApp order links remain unchanged in the Netlify-prepared storefront.
+- [x] Capture the exact Shopify 400 response for the Custom App client-credentials request.
+- [x] Revise the local Storefront token-generation workflow for the verified Shopify authentication path.
+- [x] Provide a safe rerun instruction without exposing Custom App credentials.
+- [ ] Guide the owner through adding the generated token to Netlify and testing the external preview safely.

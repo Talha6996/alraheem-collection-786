@@ -19,6 +19,30 @@ Shopify’s Admin GraphQL API provides `storefrontAccessTokenCreate`, which crea
 
 The Netlify preparation already keeps `SHOPIFY_STOREFRONT_API_ACCESS_TOKEN` server-side. The change required is documentation and a safe one-time/store-owned method for creating a compatible Storefront token; the public Shopify commerce API contract does not change.
 
+## Current Dev Dashboard screen
+
+The current **Versions** page shows one **API access** section with an upper **Scopes** field and a **Select scopes** control. It does not show a separate “Enable Storefront API access” switch. The required unauthenticated Storefront API scopes belong in that upper field; the optional scope and redirect-URL fields are not needed for this storefront. After the version is released and installed, the Custom App’s client credentials obtain a short-lived Admin API token, which is used once to run `storefrontAccessTokenCreate` and produce the Netlify Storefront token. [2] [3] [4]
+
+## Client-credentials 400 investigation
+
+Shopify documents that the client-credentials request must target `https://{shop}.myshopify.com/admin/oauth/access_token` and send the Custom App client ID, client secret, and `grant_type=client_credentials`. The resulting Admin API token expires after 24 hours. [5]
+
+For a Dev Dashboard app, Shopify’s most relevant documented 400 condition is `shop_not_permitted`: client credentials work only when both the app and the target store belong to the same Shopify organization in the Dev Dashboard. Merely owning or installing the app on a store does not establish that organization relationship. The immediate next step is to surface the response body locally without disclosing credentials, then confirm whether the target store appears under the same Dev Dashboard organization as the app. [5]
+
+The owner’s local diagnostic returned Shopify’s exact response: `Oauth error app_not_installed: The application is not installed on this shop.` This is a prerequisite issue, not a credential leak or a Netlify issue. The active Custom App version and scopes are correct; the app must now be installed or authorized on `alraheem786-9khraaqr-anchor-cedar-jcs11ees.myshopify.com` before the client-credentials request can return an Admin API token.
+
+Shopify’s official store-admin instructions for Dev Dashboard Custom Apps are: **Shopify Admin → Settings → Apps → Develop apps → Build apps in Dev Dashboard → select the Custom App → Installs → Install app → select the target store if prompted → Install**. The client-credentials flow requires this installation and issues a 24-hour Admin API token only after the app is installed. [6] [7]
+
+## References
+
+[6] [Shopify Help: Installing and setting up apps](https://help.shopify.com/en/manual/apps/install-setup-apps)
+
+[7] [Shopify Dev Docs: Using the client credentials grant](https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/client-credentials-grant)
+
+## Sources
+
+[5] [Shopify: Authenticate an app for stores in your organization](https://shopify.dev/docs/apps/build/dev-dashboard/get-api-access-tokens)
+
 ## References
 
 [1] [Shopify: Generate access tokens for admin-created custom apps](https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/generate-app-access-tokens-admin)
