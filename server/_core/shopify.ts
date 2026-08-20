@@ -214,6 +214,29 @@ const PRODUCT_FRAGMENT = /* GraphQL */ `
   }
 `;
 
+/** Lightweight fields used by product-card grids and the homepage offer banner. */
+const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `
+  ${IMAGE_FRAGMENT}
+  ${VARIANT_FRAGMENT}
+  fragment ProductCardFields on Product {
+    id
+    title
+    handle
+    productType
+    tags
+    priceRange {
+      minVariantPrice { ...MoneyFields }
+      maxVariantPrice { ...MoneyFields }
+    }
+    images(first: 1) {
+      edges { node { ...ImageFields } }
+    }
+    variants(first: 5) {
+      edges { node { ...VariantFields } }
+    }
+  }
+`;
+
 const COLLECTION_FRAGMENT = /* GraphQL */ `
   ${IMAGE_FRAGMENT}
   fragment CollectionFields on Collection {
@@ -273,39 +296,65 @@ export type ListProductsOptions = {
   collectionHandle?: string;
 };
 
+const CATALOG_CACHE_TTL_MS = 60_000;
+const productListCache = new Map<string, { expiresAt: number; products: Product[] }>();
+
+function getCachedProductList(key: string): Product[] | null {
+  const entry = productListCache.get(key);
+  if (!entry) return null;
+  if (entry.expiresAt <= Date.now()) {
+    productListCache.delete(key);
+    return null;
+  }
+  return entry.products;
+}
+
+function cacheProductList(key: string, products: Product[]): Product[] {
+  productListCache.set(key, { products, expiresAt: Date.now() + CATALOG_CACHE_TTL_MS });
+  return products;
+}
+
+/** Test-only hook for isolating mocked Storefront API cases. */
+export function clearProductListCache(): void {
+  productListCache.clear();
+}
+
 export async function listProducts(
   options: ListProductsOptions = {}
 ): Promise<Product[]> {
   const first = options.first ?? 24;
+  const cacheKey = `${options.collectionHandle ?? "all"}:${first}`;
+  const cached = getCachedProductList(cacheKey);
+  if (cached) return cached;
 
   if (options.collectionHandle) {
     const data = await storefrontFetch<{
       collection: { products: Edges<RawProduct> } | null;
     }>(
-      `${PRODUCT_FRAGMENT}
+      `${PRODUCT_CARD_FRAGMENT}
        query productsByCollection($handle: String!, $first: Int!) {
          collection(handle: $handle) {
            products(first: $first) {
-             edges { node { ...ProductFields } }
+             edges { node { ...ProductCardFields } }
            }
          }
        }`,
       { handle: options.collectionHandle, first }
     );
-    if (!data.collection) return [];
-    return data.collection.products.edges.map(e => normalizeProduct(e.node));
+    if (!data.collection) return cacheProductList(cacheKey, []);
+    return cacheProductList(cacheKey, data.collection.products.edges.map(e => normalizeProduct(e.node)));
   }
 
   const data = await storefrontFetch<{ products: Edges<RawProduct> }>(
-    `${PRODUCT_FRAGMENT}
+    `${PRODUCT_CARD_FRAGMENT}
      query listProducts($first: Int!) {
        products(first: $first, sortKey: TITLE) {
-         edges { node { ...ProductFields } }
+         edges { node { ...ProductCardFields } }
        }
      }`,
     { first }
   );
-  return data.products.edges.map(e => normalizeProduct(e.node));
+  return cacheProductList(cacheKey, data.products.edges.map(e => normalizeProduct(e.node)));
 }
 
 export async function getProductByHandle(handle: string): Promise<Product> {

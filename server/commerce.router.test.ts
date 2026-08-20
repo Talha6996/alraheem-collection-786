@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TRPCError } from "@trpc/server";
 import type { TrpcContext } from "./_core/context";
+import { clearProductListCache } from "./_core/shopify";
 import { appRouter } from "./routers";
 
 type AuthenticatedUser = NonNullable<TrpcContext["user"]>;
@@ -16,6 +17,7 @@ function makeCtx(user: AuthenticatedUser | null = null): TrpcContext {
 const fetchMock = vi.fn();
 
 beforeEach(() => {
+  clearProductListCache();
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
   process.env.SHOPIFY_STORE_DOMAIN = "test.myshopify.com";

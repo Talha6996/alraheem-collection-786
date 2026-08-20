@@ -81,7 +81,7 @@ export default function HomePromoBanner({ products, loading }: { products: Produ
         <div className="promo-controls"><div className="promo-dots" aria-label="Promotional banner slides">{slides.map((item, index) => <button key={`${item.kind}-${item.product.id}`} type="button" className={active === index ? "is-active" : ""} onClick={() => setActive(index)} aria-label={`Show ${item.eyebrow}: ${item.product.title}`} aria-current={active === index} />)}</div>{slides.length > 1 && <button type="button" className="promo-pause" onClick={() => setPaused(value => !value)} aria-label={paused ? "Resume banner rotation" : "Pause banner rotation"}>{paused ? <Play size={13} /> : <Pause size={13} />}{paused ? "Play" : "Pause"}</button>}</div>
       </div>
       <Link href={`/product/${slide.product.handle}`} className="promo-banner-image" aria-label={`View ${slide.title}`}>
-        {image ? <img src={image.url} alt={image.altText ?? slide.title} /> : <div className="promo-image-fallback"><Sparkles size={30} /></div>}
+        {image ? <img src={image.url} alt={image.altText ?? slide.title} loading="lazy" decoding="async" /> : <div className="promo-image-fallback"><Sparkles size={30} /></div>}
         <div className={`promo-badge ${slide.kind}`}><span>{slide.kind === "sale" ? <Tag size={13} /> : <Sparkles size={13} />}</span>{slide.kind === "sale" ? "Sale" : "New"}</div>
       </Link>
     </div>

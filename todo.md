@@ -55,7 +55,7 @@
 - [x] Confirm that the Shopify Online Store password does not need to be removed for the Manus headless storefront flow.
 - [x] Add deterministic regression coverage for the authorization failure path.
 - [x] Verify homepage, shop, and product queries after the authorization recovery.
-- [ ] Save and deliver the Storefront API authorization fix.
+- [x] Save and deliver the Storefront API authorization fix.
 - [x] Research current free third-party tools for mobile product management.
 - [x] Compare APK, standalone web-admin, and third-party-tool approaches without starting implementation.
 - [x] Save and deliver the no-build product-management options guidance.
@@ -68,14 +68,20 @@
 - [x] Implement responsive hero image framing for the supplied portrait asset.
 - [x] Add or update regression coverage for responsive hero sizing.
 - [x] Verify hero framing at wide desktop, standard desktop, tablet, and mobile widths.
-- [ ] Save and deliver the responsive hero-image fix.
+- [x] Save and deliver the responsive hero-image fix.
 - [x] Inspect the seven automatic Shopify category collections and their current rules.
 - [x] Convert the seven category collections to manual product assignment.
 - [x] Verify products can be assigned through Shopify’s manual collection control.
 - [x] Update the mobile upload guidance for manual collection selection.
-- [ ] Save and deliver the manual collection-management update.
+- [x] Save and deliver the manual collection-management update.
 - [x] Align website category filtering with Shopify manual collection membership and add regression coverage.
 - [x] Verify a manually assigned collection is reflected in the corresponding website category once Storefront API access is restored.
 - [x] Save a checkpoint capturing the responsive hero fix, manual collections, Manus publication, collection-based filtering, documentation, and regression coverage.
-- [ ] Deliver the manual collection workflow, Manus publication status, collection-based filtering, responsive hero fix, and checkpoint reference.
-- [ ] Save a final checkpoint containing the Storefront recovery documentation and authorization regression test.
+- [x] Deliver the manual collection workflow, Manus publication status, collection-based filtering, responsive hero fix, and checkpoint reference.
+- [x] Save a final checkpoint containing the Storefront recovery documentation and authorization regression test.
+- [x] Profile the homepage, shop, and product loading paths to identify practical performance bottlenecks.
+- [x] Reduce initial JavaScript, image, font, and catalogue-loading work without changing storefront behavior.
+- [x] Improve perceived responsiveness with efficient loading states and deferred non-critical work.
+- [x] Add focused regression coverage for the applied performance optimizations.
+- [x] Verify the optimized storefront on desktop and mobile, then run the full test suite and production build.
+- [ ] Save and deliver the storefront performance optimization checkpoint.

@@ -2,16 +2,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/trpc", () => ({
-  trpc: {
-    commerce: {
-      products: {
-        list: {
-          useQuery: () => ({ data: [], isLoading: false }),
-        },
-      },
-    },
-  },
+vi.mock("@/hooks/useCatalogueProducts", () => ({
+  useCatalogueProducts: () => ({ data: [], isLoading: false }),
 }));
 
 vi.mock("@/components/HomePromoBanner", () => ({
@@ -39,5 +31,7 @@ describe("Home", () => {
     expect(markup).toContain('alt="ALRAHEEM COLLECTION 786 fashion collection"');
     expect(markup).toContain("Find your");
     expect(markup).toContain("For the moment");
+    expect(markup).toContain('decoding="async"');
+    expect(markup).toContain('loading="lazy"');
   });
 });

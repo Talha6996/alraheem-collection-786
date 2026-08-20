@@ -1,7 +1,12 @@
 /* Heritage Atelier visual language: warm ivory, Alraheem Indigo, and rust accents. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+
+/* Keep costly below-the-fold sections out of the initial paint work. */
+@supports (content-visibility: auto) {
+  .category-section { content-visibility: auto; contain-intrinsic-size: 1px 1200px; }
+  .editorial-band { content-visibility: auto; contain-intrinsic-size: 1px 480px; }
+}
 
 @custom-variant dark (&:is(.dark *));
 

@@ -28,7 +28,7 @@ export default function ProductCard({ product, index = 1 }: { product: Product; 
     <article className="product-card group">
       <div className="product-image-wrap">
         <Link href={`/product/${product.handle}`} aria-label={`View ${product.title}`}>
-          <img src={product.images[0]?.url ?? FALLBACK_IMAGE} alt={product.images[0]?.altText ?? product.title} />
+          <img src={product.images[0]?.url ?? FALLBACK_IMAGE} alt={product.images[0]?.altText ?? product.title} loading="lazy" decoding="async" />
         </Link>
         <span className="product-badge">{product.tags[0] ?? "The edit"}</span>
         <button

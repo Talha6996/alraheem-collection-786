@@ -46,8 +46,8 @@ export type RawProduct = {
   id: string;
   title: string;
   handle: string;
-  description: string;
-  descriptionHtml: string;
+  description?: string;
+  descriptionHtml?: string;
   productType: string | null;
   vendor: string | null;
   tags: string[];
@@ -123,8 +123,8 @@ export function normalizeProduct(p: RawProduct): Product {
     id: p.id,
     handle: p.handle,
     title: p.title,
-    description: p.description,
-    descriptionHtml: p.descriptionHtml,
+    description: p.description ?? "",
+    descriptionHtml: p.descriptionHtml ?? "",
     productType: p.productType || null,
     vendor: p.vendor || null,
     tags: p.tags ?? [],

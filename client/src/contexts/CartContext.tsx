@@ -57,48 +57,44 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const utils = trpc.useUtils();
 
-  // Re-hydrate cart on mount or whenever cartId changes.
-  useEffect(() => {
-    if (!cartId) {
-      setCart(null);
-      return;
-    }
-    let cancelled = false;
+  // Cart rehydration is intentionally deferred until a shopper opens the bag
+  // or adds an item. This removes a non-essential Shopify call from every
+  // landing-page visit while retaining a saved cart for active shoppers.
+  const hydrateCart = useCallback(async (): Promise<Cart | null> => {
+    if (!cartId) return null;
     setLoading(true);
-    utils.commerce.cart.get
-      .fetch({ cartId })
-      .then(c => {
-        if (cancelled) return;
-        if (c) setCart(c);
-        else {
-          // Stored cart id no longer valid — drop it.
-          writeStoredCartId(null);
-          setCartId(null);
-        }
-      })
-      .catch(() => {
-        if (cancelled) return;
-        writeStoredCartId(null);
-        setCartId(null);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+    try {
+      const restored = await utils.commerce.cart.get.fetch({ cartId });
+      if (restored) {
+        setCart(restored);
+        return restored;
+      }
+      writeStoredCartId(null);
+      setCartId(null);
+      return null;
+    } catch {
+      writeStoredCartId(null);
+      setCartId(null);
+      return null;
+    } finally {
+      setLoading(false);
+    }
   }, [cartId, utils.commerce.cart.get]);
 
   const itemCount = cart?.itemCount ?? 0;
 
-  const openCart = useCallback(() => setIsOpen(true), []);
+  const openCart = useCallback(() => {
+    setIsOpen(true);
+    if (cartId && !cart) void hydrateCart();
+  }, [cart, cartId, hydrateCart]);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
   const addItem = useCallback(
     async (variantId: string, quantity: number = 1) => {
       setLoading(true);
       try {
-        if (!cartId || !cart) {
+        const activeCart = cart ?? await hydrateCart();
+        if (!cartId || !activeCart) {
           const created = await utils.client.commerce.cart.create.mutate({
             lines: [{ variantId, quantity }],
           });
@@ -117,7 +113,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     },
-    [cart, cartId, utils.client]
+    [cart, cartId, hydrateCart, utils.client]
   );
 
   const updateQuantity = useCallback(

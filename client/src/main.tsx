@@ -9,7 +9,18 @@ import { startLogin } from "./const";
 import { CartProvider } from "./contexts/CartContext";
 import "./index.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Storefront reads are shared across routes; retaining them briefly avoids
+      // refetching Shopify whenever a shopper changes category or returns home.
+      staleTime: 60_000,
+      gcTime: 5 * 60_000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
