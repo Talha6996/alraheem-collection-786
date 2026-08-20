@@ -83,6 +83,16 @@ describe.skipIf(!configured)("shopify smoke (live)", () => {
   );
 
   it(
+    "returns White Stone Kara through the BRANDED KARA manual collection handle",
+    { timeout: 30_000 },
+    async () => {
+      const brandedKara = await listProducts({ first: 10, collectionHandle: "branded-kara" });
+
+      expect(brandedKara.map(product => product.handle)).toContain("white-stone-kara");
+    }
+  );
+
+  it(
     "updates a live cart quantity and returns a matching PKR subtotal when a sellable variant exists",
     { timeout: 30_000 },
     async () => {

@@ -63,4 +63,18 @@
 - [x] Replace the homepage hero image with the user-supplied source through the approved asset workflow.
 - [x] Add or update regression coverage for the homepage hero image.
 - [x] Verify the replacement at desktop and mobile layouts.
-- [ ] Save and deliver the hero-image update checkpoint.
+- [x] Save and deliver the hero-image update checkpoint.
+- [x] Inspect the current desktop and mobile hero image sizing and crop behavior.
+- [x] Implement responsive hero image framing for the supplied portrait asset.
+- [x] Add or update regression coverage for responsive hero sizing.
+- [x] Verify hero framing at wide desktop, standard desktop, tablet, and mobile widths.
+- [ ] Save and deliver the responsive hero-image fix.
+- [x] Inspect the seven automatic Shopify category collections and their current rules.
+- [x] Convert the seven category collections to manual product assignment.
+- [x] Verify products can be assigned through Shopify’s manual collection control.
+- [x] Update the mobile upload guidance for manual collection selection.
+- [ ] Save and deliver the manual collection-management update.
+- [x] Align website category filtering with Shopify manual collection membership and add regression coverage.
+- [x] Verify a manually assigned collection is reflected in the corresponding website category once Storefront API access is restored.
+- [ ] Save a checkpoint capturing the responsive hero fix, manual collections, Manus publication, collection-based filtering, documentation, and regression coverage.
+- [ ] Deliver the manual collection workflow, Manus publication status, collection-based filtering, responsive hero fix, and checkpoint reference.

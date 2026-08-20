@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isStoreCategory, STORE_CATEGORIES } from "./storeCategories";
+import { findStoreCategory, isStoreCategory, STORE_CATEGORIES } from "./storeCategories";
 
 describe("STORE_CATEGORIES", () => {
   it("defines exactly the seven requested storefront categories", () => {
@@ -12,10 +12,16 @@ describe("STORE_CATEGORIES", () => {
       "BRIDAL SETS",
       "MENS BRACELET",
     ]);
-    expect(new Set(STORE_CATEGORIES.map(category => category.productType)).size).toBe(7);
+    expect(new Set(STORE_CATEGORIES.map(category => category.collectionHandle)).size).toBe(7);
+    expect(STORE_CATEGORIES.map(category => category.collectionHandle)).toEqual([
+      "jewellery", "handbags", "ladies-suit", "mens-suit", "branded-kara", "bridal-sets", "mens-bracelet",
+    ]);
   });
 
-  it("recognises the product types used by collection filtering", () => {
+  it("resolves legacy product-type URLs to the matching manual collection handle", () => {
+    expect(findStoreCategory("Branded Kara")?.collectionHandle).toBe("branded-kara");
+    expect(findStoreCategory("BRANDED KARA")?.collectionHandle).toBe("branded-kara");
+    expect(findStoreCategory("branded-kara")?.name).toBe("BRANDED KARA");
     expect(isStoreCategory("Jewellery")).toBe(true);
     expect(isStoreCategory("Unassigned collection")).toBe(false);
   });
