@@ -18,6 +18,26 @@
 
 Desktop checks confirmed the persistent WhatsApp button, the New Arrivals catalogue grid, and clear stock information alongside the Party Set product. Mobile checks confirmed the New Arrivals cards and WhatsApp button fit within a 375 px viewport; the Party Set gallery maintains its full-screen entry point and touch-friendly media controls.
 
+On the deployed public Party Set page, the `View product media full screen` control opened a dark full-screen viewer with an enlarged first Shopify image, `1 / 3 · Swipe to browse` guidance, a close control, and previous/next controls. The same deployed page showed the `IN STOCK` availability label, a related-pieces section without the current Party Set item, and the persistent bottom-right WhatsApp button.
+
+The deployed viewer’s next-media control was then used successfully: the count changed from `1 / 3` to `2 / 3`, and the enlarged photo changed to the second Shopify image. This confirms live full-screen media navigation as well as the in-component interaction tests.
+
+Closing the viewer returned the customer to the same product page with the selected second image shown in the normal gallery, confirming that the modal does not interrupt product details, stock status, checkout controls, related pieces, or global WhatsApp access.
+
+After visiting the second public product, `Rectangle white stone Kara Bangle`, the deployed page displayed `Party Set` under `YOUR BROWSING HISTORY / Recently viewed` and did not list the current Kara Bangle there. Its `Related pieces` showed Party Set and ZULBERY BAG but excluded the current Kara Bangle. The second product also displayed the public `IN STOCK` status, confirming real product-page stock, recently viewed, and current-product-exclusion behaviour.
+
+The deployed `/new-arrivals` route loaded the latest live Shopify products—Party Set, ZULBERY BAG, Rectangle white stone Kara Bangle, and White Stone Kara—in a customer-facing catalogue grid. Its header navigation includes both New Arrivals and Sale, and the site-wide WhatsApp button remained visible at the lower right.
+
+The deployed unavailable `ZULBERY BAG` product page displayed `OUT OF STOCK` and `This piece is currently unavailable to order.` Its normal add-to-bag control was replaced with an unavailable button, while WhatsApp remained available for an owner/customer availability enquiry. The same page listed the two earlier visits in Recently viewed and excluded the current ZULBERY BAG item.
+
+The deployed `/sale` page loaded Party Set, Rectangle white stone Kara Bangle, and White Stone Kara under `The sale.` The page labels the content as `Current Shopify pieces with a genuine marked-down compare-at price`, confirming that the dedicated route is populated from real Shopify markdown data rather than invented sale products.
+
+## Related-product and low-stock edge states
+
+When Shopify has no matching related products, the product page now shows the customer-facing message **“More pieces are coming soon.”** with a direct route to the full collection; a jsdom component test covers this deterministic empty state.
+
+Shopify’s public Storefront API reveals whether an item is sellable but does not expose a reliable public inventory count. To show a deliberate low-stock message, add one of these exact product tags in Shopify: `Only 2 left`, `Low stock`, `Limited stock`, or `Limited availability`. The storefront renders the matching limited-availability badge. Without one of these owner-controlled tags, customers safely see **In stock** rather than a made-up quantity. The low-stock component test verifies both the `Only 2 left` tag path and the no-tag fallback.
+
 ## Test status
 
 Focused commerce and product-gallery tests pass, including full-screen video rendering. The Netlify production build completes. The full suite reports one pre-existing live Shopify cart smoke-test discrepancy: Shopify returned a stale quantity of 1 after a requested live-cart update to 2. The feature-specific tests all pass, and the storefront changes do not alter cart mutation code.

@@ -161,7 +161,9 @@
 - [x] Show clear Shopify-based stock status, including out-of-stock and low-stock messaging where available.
 - [x] Add dedicated New Arrivals and Sale catalogue pages using live Shopify product data.
 - [x] Add a site-wide floating WhatsApp ordering button using 923361243334.
-- [ ] Add and run swipe-gesture regression coverage for the full-screen media viewer, then verify the product page at a mobile viewport.
-- [ ] Add regression coverage and visual verification for recently viewed products, including local-storage persistence and exclusion of the current product.
-- [ ] Add regression coverage and live verification for related products, including current-product exclusion and its empty state.
-- [ ] Add product-page regression coverage and visual verification for Shopify stock states, including out-of-stock and owner-controlled low-stock messages.
+- [x] Add and run swipe-gesture regression coverage for the full-screen media viewer, then verify the product page at a mobile viewport.
+- [x] Add regression coverage and visual verification for recently viewed products, including local-storage persistence and exclusion of the current product.
+- [x] Add regression coverage and live verification for related products, including current-product exclusion and its empty state.
+- [x] Add product-page regression coverage and visual verification for Shopify stock states, including out-of-stock and owner-controlled low-stock messages.
+- [x] Add a deterministic related-products empty-state test and capture its verified customer-facing empty state.
+- [x] Verify owner-controlled low-stock messaging from Shopify product tags, including its safe fallback when no low-stock tag is present.
