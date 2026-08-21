@@ -1,5 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import ProductGallery from "./ProductGallery";
 
@@ -24,6 +26,7 @@ describe("ProductGallery", () => {
     }
     expect(markup).toContain('aria-label="View image 3 of 3"');
     expect(markup).toContain('aria-label="View next product image"');
+    expect(markup).toContain("product-gallery-main-image");
     expect(markup).toContain("object-contain");
     expect(markup).not.toContain("object-cover");
   });
@@ -38,5 +41,13 @@ describe("ProductGallery", () => {
     );
 
     expect(markup).toContain("Product photos coming soon");
+  });
+
+  it("limits mouse-hover zoom to laptop and desktop fine-pointer devices", () => {
+    const styles = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
+
+    expect(styles).toContain("@media (min-width: 1024px) and (hover: hover) and (pointer: fine)");
+    expect(styles).toContain(".product-gallery-main-image:hover { transform: scale(1.09); }");
+    expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
   });
 });

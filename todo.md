@@ -145,3 +145,4 @@
 - [x] Add the new collection to storefront navigation as the owner-requested new public category.
 - [x] Verify the active Shopify `Standard` delivery configuration remains PKR 250 and the new PARTY SET collection is reachable from the live storefront.
 - [x] Display every Shopify product image in a responsive product gallery and use natural image fitting instead of an overly zoomed crop.
+- [x] Add a mouse-hover zoom effect to main product images on laptops and desktops only, without changing mobile touch behaviour.

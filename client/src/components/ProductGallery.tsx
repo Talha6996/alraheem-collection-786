@@ -44,7 +44,7 @@ export default function ProductGallery({ images, productHandle, productTitle }: 
     <section aria-label={`${productTitle} image gallery`} className="space-y-3">
       <div className="group relative grid aspect-[4/5] place-items-center overflow-hidden bg-[#eee8dd] p-2 sm:p-4">
         <img
-          className="h-full w-full object-contain"
+          className="product-gallery-main-image h-full w-full object-contain"
           src={activeImage.url}
           alt={activeImage.altText || `${productTitle} — image ${activeImageIndex + 1}`}
           fetchPriority="high"

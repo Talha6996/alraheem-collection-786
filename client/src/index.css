@@ -8,6 +8,16 @@
   .editorial-band { content-visibility: auto; contain-intrinsic-size: 1px 480px; }
 }
 
+.product-gallery-main-image { transform-origin: center; transition: transform 240ms cubic-bezier(.23,1,.32,1); }
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .product-gallery-main-image { cursor: zoom-in; }
+  .product-gallery-main-image:hover { transform: scale(1.09); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-gallery-main-image { transition: none; }
+  .product-gallery-main-image:hover { transform: none; }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
