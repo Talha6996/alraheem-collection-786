@@ -40,6 +40,24 @@ export default function ProductGallery({ images, productHandle, productTitle }: 
     setActiveImageIndex(currentIndex => (currentIndex + 1) % imageCount);
   };
 
+  const setZoomFocalPoint = (event: React.MouseEvent<HTMLImageElement>) => {
+    const { currentTarget } = event;
+    const bounds = currentTarget.getBoundingClientRect();
+    const horizontalPosition = Math.min(100, Math.max(0, ((event.clientX - bounds.left) / bounds.width) * 100));
+    const verticalPosition = Math.min(100, Math.max(0, ((event.clientY - bounds.top) / bounds.height) * 100));
+
+    currentTarget.style.setProperty("--gallery-zoom-x", `${horizontalPosition}%`);
+    currentTarget.style.setProperty("--gallery-zoom-y", `${verticalPosition}%`);
+    currentTarget.classList.add("is-zoomed");
+  };
+
+  const clearZoomFocalPoint = (event: React.MouseEvent<HTMLImageElement>) => {
+    const { currentTarget } = event;
+    currentTarget.classList.remove("is-zoomed");
+    currentTarget.style.removeProperty("--gallery-zoom-x");
+    currentTarget.style.removeProperty("--gallery-zoom-y");
+  };
+
   return (
     <section aria-label={`${productTitle} image gallery`} className="space-y-3">
       <div className="group relative grid aspect-[4/5] place-items-center overflow-hidden bg-[#eee8dd] p-2 sm:p-4">
@@ -49,6 +67,9 @@ export default function ProductGallery({ images, productHandle, productTitle }: 
           alt={activeImage.altText || `${productTitle} — image ${activeImageIndex + 1}`}
           fetchPriority="high"
           decoding="async"
+          onMouseEnter={setZoomFocalPoint}
+          onMouseMove={setZoomFocalPoint}
+          onMouseLeave={clearZoomFocalPoint}
         />
         {imageCount > 1 ? (
           <>
