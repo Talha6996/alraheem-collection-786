@@ -144,3 +144,4 @@
 - [x] Make the new Shopify collection visible through the Netlify Storefront API without altering existing collections.
 - [x] Add the new collection to storefront navigation as the owner-requested new public category.
 - [x] Verify the active Shopify `Standard` delivery configuration remains PKR 250 and the new PARTY SET collection is reachable from the live storefront.
+- [x] Display every Shopify product image in a responsive product gallery and use natural image fitting instead of an overly zoomed crop.

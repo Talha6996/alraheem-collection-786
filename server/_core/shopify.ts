@@ -205,7 +205,7 @@ const PRODUCT_FRAGMENT = /* GraphQL */ `
       minVariantPrice { ...MoneyFields }
       maxVariantPrice { ...MoneyFields }
     }
-    images(first: 8) {
+    images(first: 250) {
       edges { node { ...ImageFields } }
     }
     variants(first: 25) {
