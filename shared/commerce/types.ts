@@ -24,6 +24,18 @@ export type Image = {
   height?: number;
 };
 
+export type ProductVideoSource = {
+  url: string;
+  mimeType: string | null;
+  width?: number;
+  height?: number;
+};
+
+/** Product media normalized from the commerce backend, not a Shopify GraphQL shape. */
+export type ProductMedia =
+  | { type: "image"; image: Image }
+  | { type: "video"; altText: string | null; previewImage: Image | null; sources: ProductVideoSource[] };
+
 export type ProductOption = {
   name: string; // e.g. "Size"
   values: string[]; // e.g. ["Small", "Medium", "Large"]
@@ -56,7 +68,11 @@ export type Product = {
   productType: string | null;
   vendor: string | null;
   tags: string[];
+  /** Public Shopify sale availability. Exact inventory quantities remain private. */
+  availableForSale: boolean;
   images: Image[];
+  /** Ordered images and Shopify-hosted videos for the product-detail gallery. */
+  media: ProductMedia[];
   /** Min / max across all variants — useful for "from $X" pricing. */
   priceRange: { min: Money; max: Money };
   /** Available option dimensions (e.g. Size, Color) for the variant picker. */

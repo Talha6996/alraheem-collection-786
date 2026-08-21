@@ -2,14 +2,14 @@ import type { Product } from "@shared/commerce/types";
 import { useEffect, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 
-type CatalogueInput = { first: number; collectionHandle?: string };
+type CatalogueInput = { first: number; collectionHandle?: string; sort?: "NEWEST" | "TITLE" };
 type StoredCatalogue = { savedAt: number; products: Product[] };
 
 const CACHE_PREFIX = "alraheem:catalogue:v1:";
 const MAX_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 function storageKey(input: CatalogueInput) {
-  return `${CACHE_PREFIX}${input.collectionHandle ?? "all"}:${input.first}`;
+  return `${CACHE_PREFIX}${input.collectionHandle ?? "all"}:${input.sort ?? "TITLE"}:${input.first}`;
 }
 
 function readCachedCatalogue(input: CatalogueInput): StoredCatalogue | undefined {
@@ -43,8 +43,8 @@ function writeCachedCatalogue(input: CatalogueInput, products: Product[]) {
  */
 export function useCatalogueProducts(input: CatalogueInput, options?: { enabled?: boolean }) {
   const stableInput = useMemo(
-    () => ({ first: input.first, ...(input.collectionHandle ? { collectionHandle: input.collectionHandle } : {}) }),
-    [input.collectionHandle, input.first]
+    () => ({ first: input.first, ...(input.collectionHandle ? { collectionHandle: input.collectionHandle } : {}), ...(input.sort ? { sort: input.sort } : {}) }),
+    [input.collectionHandle, input.first, input.sort]
   );
   const cached = useMemo(() => readCachedCatalogue(stableInput), [stableInput]);
   const query = trpc.commerce.products.list.useQuery(stableInput, {

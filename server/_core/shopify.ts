@@ -200,6 +200,7 @@ const PRODUCT_FRAGMENT = /* GraphQL */ `
     productType
     vendor
     tags
+    availableForSale
     options { name values }
     priceRange {
       minVariantPrice { ...MoneyFields }
@@ -207,6 +208,21 @@ const PRODUCT_FRAGMENT = /* GraphQL */ `
     }
     images(first: 250) {
       edges { node { ...ImageFields } }
+    }
+    media(first: 250) {
+      edges {
+        node {
+          alt
+          mediaContentType
+          previewImage { ...ImageFields }
+          ... on MediaImage {
+            image { ...ImageFields }
+          }
+          ... on Video {
+            sources { url mimeType width height }
+          }
+        }
+      }
     }
     variants(first: 25) {
       edges { node { ...VariantFields } }
@@ -224,6 +240,7 @@ const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `
     handle
     productType
     tags
+    availableForSale
     priceRange {
       minVariantPrice { ...MoneyFields }
       maxVariantPrice { ...MoneyFields }
@@ -294,6 +311,8 @@ export type ListProductsOptions = {
   first?: number;
   /** Optional handle of a collection to scope the listing to. */
   collectionHandle?: string;
+  /** Request newest Shopify products first for the New Arrivals page. */
+  sort?: "NEWEST" | "TITLE";
 };
 
 const CATALOG_CACHE_TTL_MS = 60_000;
@@ -323,7 +342,7 @@ export async function listProducts(
   options: ListProductsOptions = {}
 ): Promise<Product[]> {
   const first = options.first ?? 24;
-  const cacheKey = `${options.collectionHandle ?? "all"}:${first}`;
+  const cacheKey = `${options.collectionHandle ?? "all"}:${options.sort ?? "TITLE"}:${first}`;
   const cached = getCachedProductList(cacheKey);
   if (cached) return cached;
 
@@ -345,10 +364,12 @@ export async function listProducts(
     return cacheProductList(cacheKey, data.collection.products.edges.map(e => normalizeProduct(e.node)));
   }
 
+  const sortKey = options.sort === "NEWEST" ? "CREATED_AT" : "TITLE";
+  const reverse = options.sort === "NEWEST" ? ", reverse: true" : "";
   const data = await storefrontFetch<{ products: Edges<RawProduct> }>(
     `${PRODUCT_CARD_FRAGMENT}
      query listProducts($first: Int!) {
-       products(first: $first, sortKey: TITLE) {
+       products(first: $first, sortKey: ${sortKey}${reverse}) {
          edges { node { ...ProductCardFields } }
        }
      }`,

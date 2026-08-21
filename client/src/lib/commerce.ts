@@ -15,10 +15,38 @@ export function primaryVariant(product: Product) {
   return product.variants[0] ?? null;
 }
 
+export type StockStatus = { label: string; detail: string; tone: "available" | "limited" | "soldout" };
+
+/**
+ * Shopify Storefront intentionally exposes sale availability, not private stock
+ * counts. Store owners can add an exact tag such as "Only 2 left" when they
+ * want that shopper-facing label to appear.
+ */
+export function getStockStatus(product: Product): StockStatus {
+  if (!product.availableForSale) {
+    return { label: "Out of stock", detail: "This piece is currently unavailable to order.", tone: "soldout" };
+  }
+
+  const exactCountTag = product.tags.find(tag => /^only\s+\d+\s+left$/i.test(tag.trim()));
+  if (exactCountTag) {
+    return { label: exactCountTag, detail: "Limited availability — order soon.", tone: "limited" };
+  }
+
+  if (product.tags.some(tag => /^(low stock|limited stock|limited availability)$/i.test(tag.trim()))) {
+    return { label: "Limited availability", detail: "Please order soon or confirm on WhatsApp.", tone: "limited" };
+  }
+
+  return { label: "In stock", detail: "Available to order now.", tone: "available" };
+}
+
 function whatsappUrl(message: string) {
   const url = new URL(`https://wa.me/${WHATSAPP_BUSINESS_NUMBER}`);
   url.searchParams.set("text", message);
   return url.toString();
+}
+
+export function createStoreWhatsAppUrl() {
+  return whatsappUrl("Hello ALRAHEEM COLLECTION 786, I would like help choosing a product or placing an order.");
 }
 
 export function createProductOrderUrl({ title, price, productUrl }: { title: string; price: string; productUrl: string }) {

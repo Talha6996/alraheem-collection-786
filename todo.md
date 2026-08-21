@@ -154,3 +154,14 @@
 - [x] Initial investigation identified the reported bottom-right NEW/sparkle badge as a storefront-rendered promotion-image element.
 - [x] Reproduce the reported bottom-right badge on homepage, Shop cards, and product-gallery images to identify its actual source.
 - [x] Remove the storefront-rendered promotion-image badge while preserving product photos and gallery controls.
+- [x] Add a full-screen product media viewer with swipe support on touch devices.
+- [x] Surface Shopify-uploaded product videos alongside product photos for supported listings.
+- [x] Add a browser-local recently viewed products section.
+- [x] Add related products below each product page using live Shopify catalogue data.
+- [x] Show clear Shopify-based stock status, including out-of-stock and low-stock messaging where available.
+- [x] Add dedicated New Arrivals and Sale catalogue pages using live Shopify product data.
+- [x] Add a site-wide floating WhatsApp ordering button using 923361243334.
+- [ ] Add and run swipe-gesture regression coverage for the full-screen media viewer, then verify the product page at a mobile viewport.
+- [ ] Add regression coverage and visual verification for recently viewed products, including local-storage persistence and exclusion of the current product.
+- [ ] Add regression coverage and live verification for related products, including current-product exclusion and its empty state.
+- [ ] Add product-page regression coverage and visual verification for Shopify stock states, including out-of-stock and owner-controlled low-stock messages.

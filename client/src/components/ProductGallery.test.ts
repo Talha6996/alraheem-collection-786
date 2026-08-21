@@ -4,9 +4,11 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { fireEvent, render } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import ProductGallery from "./ProductGallery";
+
+afterEach(cleanup);
 
 const galleryImages = [
   { url: "https://cdn.example.com/product-front.jpg", altText: "Front view" },
@@ -28,7 +30,7 @@ describe("ProductGallery", () => {
       expect(markup).toContain(image.url);
     }
     expect(markup).toContain('aria-label="View image 3 of 3"');
-    expect(markup).toContain('aria-label="View next product image"');
+    expect(markup).toContain('aria-label="View next product media"');
     expect(markup).toContain("product-gallery-main-image");
     expect(markup).toContain("object-contain");
     expect(markup).not.toContain("object-cover");
@@ -54,7 +56,7 @@ describe("ProductGallery", () => {
     expect(styles).toContain(".product-gallery-magnifier");
     expect(styles).toContain("background-size: 250%");
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
-    expect(componentSource).toContain("onMouseMove={updateMagnifier}");
+    expect(componentSource).toContain("onMouseMove={fullScreen ? undefined : updateMagnifier}");
     expect(componentSource).toContain('className="product-gallery-magnifier"');
     expect(componentSource).not.toContain("is-zoomed");
   });
@@ -104,5 +106,34 @@ describe("ProductGallery", () => {
 
     fireEvent.mouseLeave(mainImage);
     expect(container.querySelector(".product-gallery-magnifier")).toBeNull();
+  });
+
+  it("opens a full-screen viewer and renders Shopify-hosted product videos alongside images", () => {
+    const { getAllByLabelText, getAllByRole, getByRole, getByLabelText } = render(
+      createElement(ProductGallery, {
+        images: galleryImages,
+        media: [
+          { type: "image", image: galleryImages[0] },
+          { type: "video", altText: "Jewellery movement video", previewImage: galleryImages[1], sources: [{ url: "https://cdn.example.com/piece.mp4", mimeType: "video/mp4" }] },
+        ],
+        productHandle: "media-piece",
+        productTitle: "Media Piece",
+      })
+    );
+
+    expect(getByLabelText("View video 2 of 2")).toBeTruthy();
+    fireEvent.click(getByRole("button", { name: "View product media full screen" }));
+    expect(getByRole("dialog", { name: "Media Piece full screen media" })).toBeTruthy();
+    fireEvent.click(getAllByRole("button", { name: "View next product media" }).at(-1)!);
+    expect(getAllByLabelText("Jewellery movement video").at(-1)?.tagName).toBe("VIDEO");
+  });
+
+  it("changes full-screen media after a deliberate touch swipe", () => {
+    const { getByRole, getByLabelText } = render(createElement(ProductGallery, { images: galleryImages, productHandle: "swipe-piece", productTitle: "Swipe Piece" }));
+    fireEvent.click(getByRole("button", { name: "View product media full screen" }));
+    const dialog = getByRole("dialog", { name: "Swipe Piece full screen media" });
+    fireEvent.touchStart(dialog, { touches: [{ clientX: 240 }] });
+    fireEvent.touchEnd(dialog, { changedTouches: [{ clientX: 120 }] });
+    expect(getByLabelText("View image 2 of 3").getAttribute("aria-current")).toBe("true");
   });
 });

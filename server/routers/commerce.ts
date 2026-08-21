@@ -40,6 +40,7 @@ export const commerceRouter = router({
           .object({
             first: z.number().int().min(1).max(100).optional(),
             collectionHandle: z.string().min(1).optional(),
+            sort: z.enum(["NEWEST", "TITLE"]).optional(),
           })
           .optional()
       )

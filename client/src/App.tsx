@@ -11,6 +11,7 @@ const Bag = lazy(() => import("./pages/Bag"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const PromotionCatalogue = lazy(() => import("./pages/PromotionCatalogue"));
 const Shop = lazy(() => import("./pages/Shop"));
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
@@ -39,6 +40,8 @@ function Router() {
         <Route path={"/"} component={Home} />
         <Route path={"/shop"} component={Shop} />
         <Route path={"/product/:handle"} component={ProductDetail} />
+        <Route path={"/new-arrivals"}>{() => <PromotionCatalogue kind="new" />}</Route>
+        <Route path={"/sale"}>{() => <PromotionCatalogue kind="sale" />}</Route>
         <Route path={"/bag"} component={Bag} />
         <Route path={"/wishlist"} component={Wishlist} />
         <Route path={"/track-order"} component={TrackOrder} />

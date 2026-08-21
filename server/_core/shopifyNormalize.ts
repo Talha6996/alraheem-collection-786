@@ -20,6 +20,7 @@ import type {
   Image,
   Money,
   Product,
+  ProductMedia,
   ProductOption,
   ProductVariant,
   SelectedOption,
@@ -32,6 +33,14 @@ type RawImage = { url: string; altText: string | null; width?: number; height?: 
 type RawSelectedOption = { name: string; value: string };
 type RawProductOption = { name: string; values: string[] };
 type Edges<T> = { edges: Array<{ node: T }> };
+type RawVideoSource = { url: string; mimeType?: string | null; width?: number; height?: number };
+type RawMedia = {
+  alt?: string | null;
+  mediaContentType: string;
+  previewImage?: RawImage | null;
+  image?: RawImage | null;
+  sources?: RawVideoSource[];
+};
 
 type RawVariant = {
   id: string;
@@ -51,9 +60,11 @@ export type RawProduct = {
   productType: string | null;
   vendor: string | null;
   tags: string[];
+  availableForSale?: boolean;
   options: RawProductOption[];
   priceRange: { minVariantPrice: RawMoney; maxVariantPrice: RawMoney };
   images: Edges<RawImage>;
+  media?: Edges<RawMedia>;
   variants: Edges<RawVariant>;
 };
 
@@ -107,6 +118,25 @@ function normalizeProductOption(o: RawProductOption): ProductOption {
   return { name: o.name, values: o.values };
 }
 
+function normalizeMedia(media: RawMedia): ProductMedia | null {
+  if (media.mediaContentType === "VIDEO" && media.sources?.length) {
+    return {
+      type: "video",
+      altText: media.alt ?? null,
+      previewImage: media.previewImage ? normalizeImage(media.previewImage) : null,
+      sources: media.sources.map(source => ({
+        url: source.url,
+        mimeType: source.mimeType ?? null,
+        width: source.width,
+        height: source.height,
+      })),
+    };
+  }
+
+  const image = media.image ?? media.previewImage;
+  return image ? { type: "image", image: normalizeImage(image) } : null;
+}
+
 function normalizeVariant(v: RawVariant): ProductVariant {
   return {
     id: v.id,
@@ -128,7 +158,11 @@ export function normalizeProduct(p: RawProduct): Product {
     productType: p.productType || null,
     vendor: p.vendor || null,
     tags: p.tags ?? [],
+    availableForSale: Boolean(p.availableForSale ?? p.variants.edges.some(edge => edge.node.availableForSale)),
     images: p.images.edges.map(e => normalizeImage(e.node)),
+    media: (p.media?.edges ?? [])
+      .map(edge => normalizeMedia(edge.node))
+      .filter((media): media is ProductMedia => media !== null),
     priceRange: {
       min: normalizeMoney(p.priceRange.minVariantPrice),
       max: normalizeMoney(p.priceRange.maxVariantPrice),
