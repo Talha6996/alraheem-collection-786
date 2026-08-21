@@ -8,13 +8,25 @@ type ProductGalleryProps = {
   productTitle: string;
 };
 
+type LensPosition = {
+  left: number;
+  top: number;
+  backgroundX: number;
+  backgroundY: number;
+};
+
+const LENS_SIZE = 176;
+const LENS_GAP = 18;
+
 export default function ProductGallery({ images, productHandle, productTitle }: ProductGalleryProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [lensPosition, setLensPosition] = useState<LensPosition | null>(null);
   const imageCount = images.length;
   const activeImage = images[activeImageIndex] ?? null;
 
   useEffect(() => {
     setActiveImageIndex(0);
+    setLensPosition(null);
   }, [productHandle]);
 
   useEffect(() => {
@@ -40,23 +52,33 @@ export default function ProductGallery({ images, productHandle, productTitle }: 
     setActiveImageIndex(currentIndex => (currentIndex + 1) % imageCount);
   };
 
-  const setZoomFocalPoint = (event: React.MouseEvent<HTMLImageElement>) => {
+  const updateMagnifier = (event: React.MouseEvent<HTMLImageElement>) => {
     const { currentTarget } = event;
-    const bounds = currentTarget.getBoundingClientRect();
-    const horizontalPosition = Math.min(100, Math.max(0, ((event.clientX - bounds.left) / bounds.width) * 100));
-    const verticalPosition = Math.min(100, Math.max(0, ((event.clientY - bounds.top) / bounds.height) * 100));
+    const galleryFrame = currentTarget.parentElement;
 
-    currentTarget.style.setProperty("--gallery-zoom-x", `${horizontalPosition}%`);
-    currentTarget.style.setProperty("--gallery-zoom-y", `${verticalPosition}%`);
-    currentTarget.classList.add("is-zoomed");
+    if (!galleryFrame) return;
+
+    const imageBounds = currentTarget.getBoundingClientRect();
+    const frameBounds = galleryFrame.getBoundingClientRect();
+    const horizontalPosition = Math.min(100, Math.max(0, ((event.clientX - imageBounds.left) / imageBounds.width) * 100));
+    const verticalPosition = Math.min(100, Math.max(0, ((event.clientY - imageBounds.top) / imageBounds.height) * 100));
+    const frameX = event.clientX - frameBounds.left;
+    const frameY = event.clientY - frameBounds.top;
+    const preferredLeft = frameX + LENS_GAP;
+    const left = preferredLeft + LENS_SIZE <= frameBounds.width
+      ? preferredLeft
+      : Math.max(0, frameX - LENS_SIZE - LENS_GAP);
+    const top = Math.min(Math.max(0, frameY - LENS_SIZE / 2), Math.max(0, frameBounds.height - LENS_SIZE));
+
+    setLensPosition({
+      left,
+      top,
+      backgroundX: horizontalPosition,
+      backgroundY: verticalPosition,
+    });
   };
 
-  const clearZoomFocalPoint = (event: React.MouseEvent<HTMLImageElement>) => {
-    const { currentTarget } = event;
-    currentTarget.classList.remove("is-zoomed");
-    currentTarget.style.removeProperty("--gallery-zoom-x");
-    currentTarget.style.removeProperty("--gallery-zoom-y");
-  };
+  const clearMagnifier = () => setLensPosition(null);
 
   return (
     <section aria-label={`${productTitle} image gallery`} className="space-y-3">
@@ -67,10 +89,22 @@ export default function ProductGallery({ images, productHandle, productTitle }: 
           alt={activeImage.altText || `${productTitle} — image ${activeImageIndex + 1}`}
           fetchPriority="high"
           decoding="async"
-          onMouseEnter={setZoomFocalPoint}
-          onMouseMove={setZoomFocalPoint}
-          onMouseLeave={clearZoomFocalPoint}
+          onMouseEnter={updateMagnifier}
+          onMouseMove={updateMagnifier}
+          onMouseLeave={clearMagnifier}
         />
+        {lensPosition ? (
+          <div
+            className="product-gallery-magnifier"
+            aria-hidden="true"
+            style={{
+              left: lensPosition.left,
+              top: lensPosition.top,
+              backgroundImage: `url(${activeImage.url})`,
+              backgroundPosition: `${lensPosition.backgroundX}% ${lensPosition.backgroundY}%`,
+            }}
+          />
+        ) : null}
         {imageCount > 1 ? (
           <>
             <button

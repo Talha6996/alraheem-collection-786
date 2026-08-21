@@ -43,14 +43,16 @@ describe("ProductGallery", () => {
     expect(markup).toContain("Product photos coming soon");
   });
 
-  it("limits mouse-hover zoom to laptop and desktop fine-pointer devices", () => {
+  it("provides a separate magnifying lens on laptop and desktop fine-pointer devices", () => {
     const styles = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
     const componentSource = readFileSync(resolve(process.cwd(), "client/src/components/ProductGallery.tsx"), "utf8");
 
     expect(styles).toContain("@media (min-width: 1024px) and (hover: hover) and (pointer: fine)");
-    expect(styles).toContain(".product-gallery-main-image.is-zoomed { transform: scale(1.22); }");
+    expect(styles).toContain(".product-gallery-magnifier");
+    expect(styles).toContain("background-size: 250%");
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
-    expect(componentSource).toContain("onMouseMove={setZoomFocalPoint}");
-    expect(componentSource).toContain('currentTarget.classList.add("is-zoomed")');
+    expect(componentSource).toContain("onMouseMove={updateMagnifier}");
+    expect(componentSource).toContain('className="product-gallery-magnifier"');
+    expect(componentSource).not.toContain("is-zoomed");
   });
 });
