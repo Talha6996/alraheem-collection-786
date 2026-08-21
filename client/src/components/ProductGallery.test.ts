@@ -1,8 +1,11 @@
+// @vitest-environment jsdom
+
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import ProductGallery from "./ProductGallery";
 
 const galleryImages = [
@@ -54,5 +57,52 @@ describe("ProductGallery", () => {
     expect(componentSource).toContain("onMouseMove={updateMagnifier}");
     expect(componentSource).toContain('className="product-gallery-magnifier"');
     expect(componentSource).not.toContain("is-zoomed");
+  });
+
+  it("mounts, moves, and removes the magnifier in response to real mouse interaction", () => {
+    const { container, getByAltText } = render(
+      createElement(ProductGallery, {
+        images: galleryImages,
+        productHandle: "interactive-gallery-piece",
+        productTitle: "Interactive Gallery Piece",
+      })
+    );
+    const mainImage = getByAltText("Front view");
+    const galleryFrame = mainImage.parentElement;
+    const bounds = {
+      bottom: 650,
+      height: 600,
+      left: 100,
+      right: 700,
+      top: 50,
+      width: 600,
+      x: 100,
+      y: 50,
+      toJSON: () => ({}),
+    } as DOMRect;
+
+    expect(galleryFrame).not.toBeNull();
+    vi.spyOn(mainImage, "getBoundingClientRect").mockReturnValue(bounds);
+    vi.spyOn(galleryFrame!, "getBoundingClientRect").mockReturnValue(bounds);
+    expect(container.querySelector(".product-gallery-magnifier")).toBeNull();
+
+    fireEvent.mouseEnter(mainImage, { clientX: 280, clientY: 260 });
+    const firstLens = container.querySelector<HTMLElement>(".product-gallery-magnifier");
+    expect(firstLens).not.toBeNull();
+    expect(firstLens?.style.left).toBe("198px");
+    expect(firstLens?.style.top).toBe("122px");
+    expect(firstLens?.style.backgroundPosition).toBe("30% 35%");
+    expect(firstLens?.style.backgroundImage).toContain("product-front.jpg");
+
+    fireEvent.mouseMove(mainImage, { clientX: 520, clientY: 350 });
+    const movedLens = container.querySelector<HTMLElement>(".product-gallery-magnifier");
+    expect(movedLens?.style.left).toBe("226px");
+    expect(movedLens?.style.top).toBe("212px");
+    expect(movedLens?.style.backgroundPosition).toBe("70% 50%");
+    expect(mainImage.className).toContain("product-gallery-main-image");
+    expect(mainImage.className).not.toContain("is-zoomed");
+
+    fireEvent.mouseLeave(mainImage);
+    expect(container.querySelector(".product-gallery-magnifier")).toBeNull();
   });
 });

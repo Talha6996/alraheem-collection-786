@@ -147,4 +147,7 @@
 - [x] Display every Shopify product image in a responsive product gallery and use natural image fitting instead of an overly zoomed crop.
 - [x] Add a mouse-hover zoom effect to main product images on laptops and desktops only, without changing mobile touch behaviour.
 - [x] Fix the reported laptop product-page hover zoom so customers see a visible zoom while hovering over the main image.
-- [ ] Replace whole-image hover scaling with a laptop-only cursor-following magnifying lens that keeps the main product image unchanged.
+- [x] Replace whole-image hover scaling with a laptop-only cursor-following magnifying lens that keeps the main product image unchanged.
+- [x] Add interaction-level regression coverage for magnifier rendering, cursor-following position updates, and safe hover exit.
+- [x] Record concrete deployed-page verification that the magnifier appears, follows the cursor, and leaves the main image unchanged.
+- [x] Reconfirm the deployed magnifier at two distinct cursor positions and preserve that evidence in the project verification note.
