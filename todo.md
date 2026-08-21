@@ -168,3 +168,4 @@
 - [x] Add a deterministic related-products empty-state test and capture its verified customer-facing empty state.
 - [x] Verify owner-controlled low-stock messaging from Shopify product tags, including its safe fallback when no low-stock tag is present.
 - [x] Remove all customer-facing Shopify references and replace them with neutral ALRAHEEM COLLECTION 786 store language.
+- [x] Remove the full category list from the header and make Shop All, New Arrivals, and Sale larger, bold primary navigation links.
