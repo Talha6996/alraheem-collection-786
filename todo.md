@@ -167,3 +167,4 @@
 - [x] Add product-page regression coverage and visual verification for Shopify stock states, including out-of-stock and owner-controlled low-stock messages.
 - [x] Add a deterministic related-products empty-state test and capture its verified customer-facing empty state.
 - [x] Verify owner-controlled low-stock messaging from Shopify product tags, including its safe fallback when no low-stock tag is present.
+- [x] Remove all customer-facing Shopify references and replace them with neutral ALRAHEEM COLLECTION 786 store language.
