@@ -151,3 +151,6 @@
 - [x] Add interaction-level regression coverage for magnifier rendering, cursor-following position updates, and safe hover exit.
 - [x] Record concrete deployed-page verification that the magnifier appears, follows the cursor, and leaves the main image unchanged.
 - [x] Reconfirm the deployed magnifier at two distinct cursor positions and preserve that evidence in the project verification note.
+- [x] Initial investigation identified the reported bottom-right NEW/sparkle badge as a storefront-rendered promotion-image element.
+- [x] Reproduce the reported bottom-right badge on homepage, Shop cards, and product-gallery images to identify its actual source.
+- [x] Remove the storefront-rendered promotion-image badge while preserving product photos and gallery controls.

@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { createPromotionSlides } from "./HomePromoBanner";
 import type { Product } from "@shared/commerce/types";
 
@@ -21,5 +23,10 @@ describe("createPromotionSlides", () => {
     const slides = createPromotionSlides([product({ variants: [{ id: "variant-1", title: "Default Title", price: { amount: "3750", currencyCode: "PKR" }, compareAtPrice: { amount: "4950", currencyCode: "PKR" }, availableForSale: true, selectedOptions: [] }] })]);
     expect(slides).toHaveLength(2);
     expect(slides[1]).toMatchObject({ kind: "sale", price: "PKR 3,750", previousPrice: "PKR 4,950" });
+  });
+
+  it("keeps promotion images free of the bottom-right NEW/sparkle badge", () => {
+    const source = readFileSync(resolve(process.cwd(), "client/src/components/HomePromoBanner.tsx"), "utf8");
+    expect(source).not.toContain("promo-badge");
   });
 });

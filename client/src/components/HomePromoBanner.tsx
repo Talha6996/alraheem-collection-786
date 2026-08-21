@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Pause, Play, Sparkles, Tag } from "lucide-react";
+import { ArrowRight, Pause, Play, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 import type { Product } from "@shared/commerce/types";
 import { formatMoney, primaryVariant } from "@/lib/commerce";
@@ -82,7 +82,6 @@ export default function HomePromoBanner({ products, loading }: { products: Produ
       </div>
       <Link href={`/product/${slide.product.handle}`} className="promo-banner-image" aria-label={`View ${slide.title}`}>
         {image ? <img src={image.url} alt={image.altText ?? slide.title} loading="lazy" decoding="async" /> : <div className="promo-image-fallback"><Sparkles size={30} /></div>}
-        <div className={`promo-badge ${slide.kind}`}><span>{slide.kind === "sale" ? <Tag size={13} /> : <Sparkles size={13} />}</span>{slide.kind === "sale" ? "Sale" : "New"}</div>
       </Link>
     </div>
   </section>;
