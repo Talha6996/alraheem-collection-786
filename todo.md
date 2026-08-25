@@ -172,16 +172,18 @@
 - [x] Add Quick View product cards that open product details without leaving the catalogue page.
 - [x] Add live catalogue search suggestions for product names and categories.
 - [x] Add a customer-facing delivery estimate by city using published delivery policy data.
-- [ ] Add customer accounts for order history and saved delivery preferences using a secure supported account flow.
+- [x] Add customer accounts for order history and saved delivery preferences using a secure supported account flow.
 - [x] Add a clearly simulated product viewer indicator that changes second-by-second and never claims to represent real traffic.
-- [ ] Add real-buyer product image reviews with verification and moderation safeguards; never seed or invent reviews.
+- [x] Add real-buyer product image reviews with verification and moderation safeguards; never seed or invent reviews.
 - [x] Add personalized recommendations using browser-local recently viewed products.
 - [x] Add Shop by Budget routes for Under PKR 2,000, PKR 5,000, and PKR 10,000.
-- [ ] Add referral links and rewards that are issued only after tracked qualifying purchases.
-- [ ] Configure referral rewards as a one-use 17% discount, issued only after a referred customer’s paid order.
+- [x] Add referral links and rewards that are issued only after tracked qualifying purchases.
+- [x] Configure referral rewards as a one-use 17% discount, issued only after a referred customer’s paid order.
 - [x] Add a bottom-left storefront-guide chatbot using the owner-provided Gemini credential only through protected server configuration.
-- [ ] Configure a durable independent production data service and secure order-event endpoint for account, review, and referral records after Netlify deployment.
-- [ ] Add tests and production-build coverage for the customer, discovery, simulated-viewer, referral, review, and chatbot features.
+- [x] Configure a durable independent production data service and secure order-event endpoint for account, review, and referral records after Netlify deployment.
+- [x] Add tests and production-build coverage for the customer, discovery, simulated-viewer, referral, review, and chatbot features.
 - [x] Prevent the account preferences form from replacing existing profile fields with empty values when the customer submits without editing them.
 - [x] Restore Netlify production deployment by exempting only the non-secret Supabase project URL from secret scanning; preserve secret-key scanning.
 - [ ] Activate paid-order verification and 17% referral rewards through Shopify’s server-only client-credentials token flow and signed orders/paid event subscription.
+- [x] Add a server-only, owner-safe validation path for the released Shopify app’s client credentials and subscription ownership, without exposing secrets or generating customer data.
+- [x] Make the live Storefront cart-update result resilient to Shopify’s occasional stale mutation response and cover the consistency refresh.

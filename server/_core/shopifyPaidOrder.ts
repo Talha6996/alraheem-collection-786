@@ -69,11 +69,87 @@ export function verifyShopifyWebhook(rawBody: Buffer, hmacHeader?: string) {
 }
 
 export const REFERRAL_DISCOUNT_PERCENT = 17;
+export const SHOPIFY_ORDERS_PAID_TOPIC = "ORDERS_PAID";
+export const SHOPIFY_ORDERS_PAID_CALLBACK_URL = "https://alraheemcollection786.netlify.app/.netlify/functions/api/webhooks/shopify/orders-paid";
 
-async function createReferralDiscount(code: string) {
+type ShopifyAdminGraphqlError = { message?: string };
+
+async function shopifyAdminGraphql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const domain = getStoreDomain();
   const token = await getShopifyAdminAccessToken();
   if (!domain || !token) throw new Error("Shopify reward configuration is incomplete.");
+
+  const response = await fetch(`https://${domain}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": token },
+    body: JSON.stringify({ query, variables }),
+  });
+  if (!response.ok) throw new Error(`Shopify Admin API request failed with HTTP ${response.status}.`);
+
+  const payload = await response.json() as { data?: T; errors?: ShopifyAdminGraphqlError[] };
+  const error = payload.errors?.[0]?.message;
+  if (error || !payload.data) throw new Error(error ?? "Shopify Admin API returned no data.");
+  return payload.data;
+}
+
+/**
+ * Checks subscriptions visible to the released app's own Admin token and creates
+ * the ORDERS_PAID callback only when it is absent. It is intentionally not
+ * called from public traffic: an owner-only operational action must invoke it.
+ * That keeps Admin credentials and subscription management server-only.
+ */
+export async function ensureShopifyOrdersPaidSubscription() {
+  const listQuery = `query { webhookSubscriptions(first: 50) {
+    nodes {
+      id
+      topic
+      endpoint {
+        __typename
+        ... on WebhookHttpEndpoint { callbackUrl }
+      }
+    }
+  } }`;
+  type ExistingSubscriptions = {
+    webhookSubscriptions: {
+      nodes: Array<{
+        id: string;
+        topic: string;
+        endpoint?: { __typename?: string; callbackUrl?: string } | null;
+      }>;
+    };
+  };
+  const existing = await shopifyAdminGraphql<ExistingSubscriptions>(listQuery);
+  const matching = existing.webhookSubscriptions.nodes.find(subscription =>
+    subscription.topic === SHOPIFY_ORDERS_PAID_TOPIC
+    && subscription.endpoint?.callbackUrl === SHOPIFY_ORDERS_PAID_CALLBACK_URL
+  );
+  if (matching) return { created: false, subscriptionId: matching.id };
+
+  const createMutation = `mutation createOrdersPaidSubscription($topic: WebhookSubscriptionTopic!, $webhookSubscription: WebhookSubscriptionInput!) {
+    webhookSubscriptionCreate(topic: $topic, webhookSubscription: $webhookSubscription) {
+      webhookSubscription { id }
+      userErrors { message }
+    }
+  }`;
+  type CreatedSubscription = {
+    webhookSubscriptionCreate?: {
+      webhookSubscription?: { id: string } | null;
+      userErrors?: ShopifyAdminGraphqlError[];
+    };
+  };
+  const created = await shopifyAdminGraphql<CreatedSubscription>(createMutation, {
+    topic: SHOPIFY_ORDERS_PAID_TOPIC,
+    webhookSubscription: { callbackUrl: SHOPIFY_ORDERS_PAID_CALLBACK_URL, format: "JSON" },
+  });
+  const result = created.webhookSubscriptionCreate;
+  const error = result?.userErrors?.[0]?.message;
+  if (error || !result?.webhookSubscription?.id) {
+    throw new Error(error ?? "Shopify did not create the paid-order subscription.");
+  }
+  return { created: true, subscriptionId: result.webhookSubscription.id };
+}
+
+async function createReferralDiscount(code: string) {
   const query = `mutation DiscountCodeBasicCreate($basicCodeDiscount: DiscountCodeBasicInput!) {
     discountCodeBasicCreate(basicCodeDiscount: $basicCodeDiscount) {
       codeDiscountNode { id }
@@ -94,15 +170,9 @@ async function createReferralDiscount(code: string) {
       },
     },
   };
-  const response = await fetch(`https://${domain}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": token },
-    body: JSON.stringify({ query, variables }),
-  });
-  if (!response.ok) throw new Error(`Shopify reward request failed with HTTP ${response.status}.`);
-  const payload = await response.json() as { data?: { discountCodeBasicCreate?: { codeDiscountNode?: { id: string }; userErrors?: Array<{ message: string }> } }; errors?: Array<{ message: string }> };
-  const result = payload.data?.discountCodeBasicCreate;
-  const failure = payload.errors?.[0]?.message ?? result?.userErrors?.[0]?.message;
+  const payload = await shopifyAdminGraphql<{ discountCodeBasicCreate?: { codeDiscountNode?: { id: string }; userErrors?: Array<{ message: string }> } }>(query, variables);
+  const result = payload.discountCodeBasicCreate;
+  const failure = result?.userErrors?.[0]?.message;
   if (failure || !result?.codeDiscountNode?.id) throw new Error(failure ?? "Shopify did not create the referral reward.");
   return result.codeDiscountNode.id;
 }

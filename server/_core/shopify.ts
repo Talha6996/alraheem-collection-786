@@ -486,6 +486,16 @@ export async function addCartLines(
   return unwrapCart(data.cartLinesAdd, "cartLinesAdd");
 }
 
+function cartReflectsLineUpdates(cart: Cart, updates: CartLineUpdate[]) {
+  return updates.every(update =>
+    cart.items.some(item => item.lineId === update.lineId && item.quantity === update.quantity)
+  );
+}
+
+function waitForStorefrontCartConsistency() {
+  return new Promise<void>(resolve => setTimeout(resolve, 150));
+}
+
 export async function updateCartLines(
   cartId: string,
   updates: CartLineUpdate[]
@@ -503,7 +513,15 @@ export async function updateCartLines(
       lines: updates.map(u => ({ id: u.lineId, quantity: u.quantity })),
     }
   );
-  return unwrapCart(data.cartLinesUpdate, "cartLinesUpdate");
+  const updated = unwrapCart(data.cartLinesUpdate, "cartLinesUpdate");
+  if (cartReflectsLineUpdates(updated, updates)) return updated;
+
+  // Shopify can occasionally acknowledge this mutation with a just-stale cart
+  // snapshot. A brief, one-time follow-up read keeps the customer UI aligned
+  // with the accepted quantity without retrying the mutation itself.
+  await waitForStorefrontCartConsistency();
+  const refreshed = await getCart(cartId);
+  return refreshed ?? updated;
 }
 
 export async function removeCartLines(
