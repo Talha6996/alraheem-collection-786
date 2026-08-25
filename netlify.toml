@@ -5,6 +5,8 @@
 
 [build.environment]
   VITE_NETLIFY_FUNCTIONS = "true"
+  # The endpoint is a public project identifier, not a credential. The service-role key remains protected and scanned.
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL"
 
 [functions]
   node_bundler = "esbuild"

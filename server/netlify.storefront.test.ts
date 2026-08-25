@@ -82,6 +82,8 @@ describe("Netlify storefront adapter", () => {
     expect(config).toContain('command = "pnpm run build:netlify"');
     expect(config).toContain('publish = "dist/public"');
     expect(config).toContain('VITE_NETLIFY_FUNCTIONS = "true"');
+    expect(config).toContain('SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL"');
+    expect(config).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
     expect(config).toContain('from = "/api/*"');
     expect(config.indexOf('from = "/api/*"')).toBeLessThan(config.indexOf('from = "/*"'));
     expect(config).not.toContain("external_node_modules");

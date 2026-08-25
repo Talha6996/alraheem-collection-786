@@ -183,3 +183,4 @@
 - [ ] Configure a durable independent production data service and secure order-event endpoint for account, review, and referral records after Netlify deployment.
 - [ ] Add tests and production-build coverage for the customer, discovery, simulated-viewer, referral, review, and chatbot features.
 - [x] Prevent the account preferences form from replacing existing profile fields with empty values when the customer submits without editing them.
+- [x] Restore Netlify production deployment by exempting only the non-secret Supabase project URL from secret scanning; preserve secret-key scanning.
