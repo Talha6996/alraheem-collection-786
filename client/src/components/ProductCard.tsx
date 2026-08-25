@@ -6,6 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { formatMoney, primaryVariant } from "@/lib/commerce";
 import { QuickViewDialog } from "@/components/QuickViewDialog";
+import { ProductPrice } from "@/components/ProductPrice";
 
 const FALLBACK_IMAGE = "/manus-storage/alraheem-accessories-flatlay_814b21f8.jpg";
 
@@ -49,7 +50,7 @@ export default function ProductCard({ product, index = 1 }: { product: Product; 
       <div className="product-copy">
         <small>{product.productType || "ALRAHEEM EDIT"}</small>
         <h3><Link href={`/product/${product.handle}`}>{product.title}</Link></h3>
-        <p>{formatMoney(product.priceRange.min)}</p>
+        <ProductPrice price={variant?.price ?? product.priceRange.min} compareAtPrice={variant?.compareAtPrice} compact />
         <span>{product.tags.slice(0, 2).join(" · ") || "Considered everyday piece"}</span>
       </div>
     </article>

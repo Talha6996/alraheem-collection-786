@@ -19,7 +19,7 @@ The protected paid-order endpoint is `/api/webhooks/shopify/orders-paid`. It acc
 
 On 25 August 2026, the approved configuration was released as active `alraheem-netlify-storefront-3`, preserving the storefront scopes and adding the approved `read_orders` and `write_discounts` Admin scopes. The Netlify function uses Shopify’s client-credentials grant to obtain a short-lived Admin API token only in server memory, refreshes it before expiry, and never returns it to a browser.
 
-The live store currently exposes one `ORDERS_PAID` subscription at `https://alraheemcollection786.netlify.app/.netlify/functions/api/webhooks/shopify/orders-paid`. The deployed webhook endpoint was safely checked with an unsigned empty request and correctly returned `401 Invalid webhook signature`; no customer, order, review, reward, or discount record was generated during that check.
+The live store currently exposes one `ORDERS_PAID` subscription at `https://alraheemcollection786.netlify.app/.netlify/functions/api/webhooks/shopify/orders-paid`, but it was created by a different app integration and must not be treated as signed by the released app's client secret. The deployed webhook endpoint was safely checked with an unsigned empty request and correctly returned `401 Invalid webhook signature`; no customer, order, review, reward, or discount record was generated during that check.
 
 ### Official credential guidance
 
@@ -27,7 +27,24 @@ Shopify's official client-credentials guide confirms that a Dev Dashboard app ac
 
 ### Safe remaining activation check
 
-The only remaining provider-side proof is a **positive** client-credentials exchange and a signed real `orders/paid` delivery using the released app’s secret. This has deliberately not been simulated with a fabricated order, review, reward, or customer. The server contains an idempotent, server-only helper that checks the released app’s own subscriptions and creates the callback only when that app has none; it has no public trigger and no secret-exposing output.
+The positive client-credentials exchange is now verified in production. A read-only `webhookSubscriptions` query under the released app’s own server-only token confirmed that it owns **no** `ORDERS_PAID` subscription. The owner-approved, idempotent attempt to create that shop-specific subscription was rejected by Shopify with `You cannot create a webhook subscription with the specified topic`; it created no callback, order, customer, review, reward, or discount.
+
+Shopify's current documentation says that webhook topics require the matching access scope and recommends using an **app-specific** webhook configuration released with the app version. Its order-webhook example uses `read_orders`. The required provider-side correction is to configure `orders/paid` for the released app in Shopify Dev Dashboard and release a new app version, then re-run only the metadata verifier. Sources: [Manage webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe) and [Create a webhook subscription](https://shopify.dev/docs/apps/build/webhooks/get-started).
+
+### App-specific configuration finding — 25 August 2026
+
+The released version editor in the connected Shopify Dev Dashboard exposes only the `Webhooks API version` selector; it does not expose a control for adding regular app-specific topics. Shopify’s current official documentation states that regular app-specific webhook subscriptions are defined through `[[webhooks.subscriptions]]` in `shopify.app.toml` and released through `shopify app deploy`; the Dev Dashboard version editor is documented only for updating the webhook API version. The relevant production declaration is:
+
+```toml
+[webhooks]
+api_version = "2026-07"
+
+[[webhooks.subscriptions]]
+topics = ["orders/paid"]
+uri = "https://alraheemcollection786.netlify.app/.netlify/functions/api/webhooks/shopify/orders-paid"
+```
+
+This is an app-specific subscription, which Shopify says is configuration-managed rather than listed by the Admin API query. Source: [Manage webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe) and [App configuration](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration).
 
 The owner approved a one-time, temporary verifier to obtain the positive token-exchange and subscription-ownership proof without creating commerce data. The checkpoint containing that verifier is `f63e6b7b`; its Netlify production deployment started on 25 August 2026 and must complete before the verifier secret is configured and the check is run. The endpoint requires a separate `SHOPIFY_ACTIVATION_CHECK_TOKEN`, uses constant-time bearer comparison, returns only pass/fail metadata, and must be removed with the secret immediately after the result is recorded.
 
@@ -41,7 +58,7 @@ The Netlify settings check confirmed that the existing `SHOPIFY_CLIENT_SECRET` r
 
 For the owner-approved one-time check, a separate high-entropy `SHOPIFY_ACTIVATION_CHECK_TOKEN` was generated locally and prepared in Netlify as a masked secret. Its value is intentionally omitted from all source, documentation, logs, and deployment notes.
 
-Netlify accepted the temporary token with a single protected Production value. It is displayed as restricted to Builds, Functions, and Runtime and remains separate from all permanent commerce credentials.
+Netlify accepted the temporary token with a single protected Production value. It is displayed as restricted to Builds, Functions, and Runtime and remains separate from all permanent commerce credentials. After the initial path/authorization diagnostics, the one-time value was rotated and the unchanged `main@b405aaf` deployment was refreshed successfully. Netlify reported one function deployed and both redirect rules processed. The value remains temporary and must be deleted after the protected operation.
 
 The verifier code deployment was confirmed as published (`main@f63e6b7`, with one function deployed and both redirect rules processed). Its initial call returned the intentional non-descriptive `404`, consistent with the token having been added after that function bundle was published. Netlify was therefore instructed to redeploy the unchanged `main` head so the current runtime receives the temporary token; this action creates no Shopify or customer records.
 

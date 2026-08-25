@@ -286,6 +286,7 @@ const CART_FRAGMENT = /* GraphQL */ `
               id
               title
               price { ...MoneyFields }
+              compareAtPrice { ...MoneyFields }
               product {
                 handle
                 title

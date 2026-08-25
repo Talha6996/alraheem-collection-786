@@ -84,6 +84,7 @@ export type RawCartLine = {
     id: string;
     title: string;
     price: RawMoney;
+    compareAtPrice: RawMoney | null;
     product: {
       handle: string;
       title: string;
@@ -192,6 +193,7 @@ function normalizeCartItem(line: RawCartLine): CartItem {
     variantTitle: line.merchandise.title,
     image: img ? normalizeImage(img) : null,
     unitPrice: normalizeMoney(line.merchandise.price),
+    compareAtPrice: line.merchandise.compareAtPrice ? normalizeMoney(line.merchandise.compareAtPrice) : null,
     quantity: line.quantity,
     lineTotal: normalizeMoney(line.cost.totalAmount),
   };

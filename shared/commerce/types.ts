@@ -97,6 +97,8 @@ export type CartItem = {
   variantTitle: string;
   image: Image | null;
   unitPrice: Money;
+  /** Original unit price when the current Shopify variant is genuinely on sale. */
+  compareAtPrice: Money | null;
   quantity: number;
   lineTotal: Money;
 };

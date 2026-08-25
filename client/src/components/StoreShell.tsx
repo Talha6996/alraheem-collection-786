@@ -4,11 +4,12 @@ import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
-import { createCartOrderUrl, createStoreWhatsAppUrl, formatMoney } from "@/lib/commerce";
-import { storefrontAsset } from "@/lib/storeAssets";
-import { STORE_CATEGORIES } from "@/lib/storeCategories";
-import { trpc } from "@/lib/trpc";
-import { StoreGuide } from "@/components/StoreGuide";
+ import { createCartOrderUrl, createStoreWhatsAppUrl, formatMoney, multiplyMoney } from "@/lib/commerce";
+ import { storefrontAsset } from "@/lib/storeAssets";
+ import { STORE_CATEGORIES } from "@/lib/storeCategories";
+ import { trpc } from "@/lib/trpc";
+ import { StoreGuide } from "@/components/StoreGuide";
+ import { ProductPrice } from "@/components/ProductPrice";
 
 const LOGO = storefrontAsset("/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png");
 function CartDrawer() {
@@ -37,7 +38,7 @@ function CartDrawer() {
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-bold text-[#123f72]">{item.productTitle}</h3>
                 {item.variantTitle !== "Default Title" && <p className="mt-1 text-xs text-slate-500">{item.variantTitle}</p>}
-                <p className="mt-2 text-sm text-[#bb492d]">{formatMoney(item.lineTotal)}</p>
+                <ProductPrice className="mt-2 text-sm" compact price={item.lineTotal} compareAtPrice={multiplyMoney(item.compareAtPrice, item.quantity)} />
                 <div className="mt-3 flex items-center justify-between">
                   <div className="flex items-center border border-[#d8d0c2] text-xs font-bold">
                     <button type="button" className="px-2.5 py-1.5 hover:bg-[#eee8dd]" disabled={loading} onClick={() => safely(() => updateQuantity(item.lineId, Math.max(0, item.quantity - 1)))} aria-label={`Decrease ${item.productTitle} quantity`}>−</button>

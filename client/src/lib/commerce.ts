@@ -15,6 +15,22 @@ export function primaryVariant(product: Product) {
   return product.variants[0] ?? null;
 }
 
+/** A sale is shown only when Shopify's real compare-at amount exceeds the current price. */
+export function isGenuineSale(price: Money | null | undefined, compareAtPrice: Money | null | undefined) {
+  if (!price || !compareAtPrice || price.currencyCode !== compareAtPrice.currencyCode) return false;
+  const currentAmount = Number(price.amount);
+  const previousAmount = Number(compareAtPrice.amount);
+  return Number.isFinite(currentAmount) && Number.isFinite(previousAmount) && previousAmount > currentAmount;
+}
+
+/** Keeps cart-line compare-at totals accurate when a customer buys more than one discounted item. */
+export function multiplyMoney(money: Money | null | undefined, quantity: number): Money | null {
+  if (!money || !Number.isFinite(quantity)) return null;
+  const amount = Number(money.amount);
+  if (!Number.isFinite(amount)) return null;
+  return { amount: (amount * Math.max(0, quantity)).toFixed(2), currencyCode: money.currencyCode };
+}
+
 export type StockStatus = { label: string; detail: string; tone: "available" | "limited" | "soldout" };
 
 /**
