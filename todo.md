@@ -198,3 +198,5 @@
 - [x] Retire the temporary activation verifier route and its activation tests from the Netlify function while preserving the signed paid-order webhook gate.
 - [x] Display Shopify compare-at (old) price and sale price together across product cards, quick view, product pages, cart, and checkout-facing summaries when a genuine sale is present.
 - [x] Add regression coverage and production verification for old-price/sale-price display and existing single-price products.
+- [x] Style genuine original prices as smaller red strikethrough text and sale prices as larger bold black text across every storefront sale-price surface.
+- [x] Add regression coverage and visual verification for the requested sale-price typography, colour, and hierarchy.
