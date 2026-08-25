@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { ArrowRight, Heart, Menu, MessageCircle, PackageCheck, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -7,6 +7,8 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { createCartOrderUrl, createStoreWhatsAppUrl, formatMoney } from "@/lib/commerce";
 import { storefrontAsset } from "@/lib/storeAssets";
 import { STORE_CATEGORIES } from "@/lib/storeCategories";
+import { trpc } from "@/lib/trpc";
+import { StoreGuide } from "@/components/StoreGuide";
 
 const LOGO = storefrontAsset("/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png");
 function CartDrawer() {
@@ -58,8 +60,16 @@ function Header() {
   const [, setLocation] = useLocation();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const { itemCount, openCart } = useCart();
   const { count } = useWishlist();
+  useEffect(() => { const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 180); return () => window.clearTimeout(timer); }, [query]);
+  const { data: catalogue = [] } = trpc.commerce.products.list.useQuery({ first: 100 }, { enabled: debouncedQuery.length >= 2, staleTime: 5 * 60 * 1000 });
+  const suggestions = useMemo(() => {
+    const needle = debouncedQuery.toLowerCase();
+    if (needle.length < 2) return [];
+    return catalogue.filter(product => `${product.title} ${product.productType} ${product.tags.join(" ")}`.toLowerCase().includes(needle)).slice(0, 5);
+  }, [catalogue, debouncedQuery]);
 
   const submitSearch = (event: React.FormEvent) => {
     event.preventDefault();
@@ -67,7 +77,7 @@ function Header() {
     setOpen(false);
   };
 
-  return <header className="bg-[#f9f6ef]"><div className="announcement-bar"><p><PackageCheck size={12} /> A considered edit for every day — complimentary delivery on orders over PKR 5,000</p><Link className="announcement-link" href="/track-order">Track your order <ArrowRight size={12} /></Link></div><div className="container header-main"><Link href="/" className="brand-lockup" aria-label="ALRAHEEM COLLECTION 786 home"><img className="brand-logo" src={LOGO} alt="ALRAHEEM COLLECTION 786 official logo" fetchPriority="high" decoding="async" /></Link><form className="search-field" onSubmit={submitSearch}><Search size={17} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search the collection" aria-label="Search the collection" /><button type="submit" aria-label="Search"><ArrowRight size={15} /></button></form><div className="header-actions"><Link href="/contact" aria-label="Contact ALRAHEEM COLLECTION 786"><UserRound size={20} /></Link><Link href="/wishlist" aria-label="View saved items" className="relative"><Heart size={20} />{count > 0 && <span className="count-badge">{count}</span>}</Link><button type="button" aria-label="Open shopping bag" onClick={openCart}><ShoppingBag size={20} />{itemCount > 0 && <span className="count-badge">{itemCount}</span>}</button><button className="mobile-menu-button" type="button" onClick={() => setOpen(value => !value)} aria-label="Toggle navigation">{open ? <X size={22} /> : <Menu size={22} />}</button></div></div><nav className="main-nav main-nav--primary" aria-label="Primary navigation"><Link href="/shop">Shop all</Link><Link href="/new-arrivals">New arrivals</Link><Link href="/sale">Sale</Link></nav>{open && <div className="border-t border-[#d8d0c2] bg-[#fffdf9] px-5 py-4 md:hidden"><div className="grid gap-3"><Link onClick={() => setOpen(false)} href="/shop" className="border-b border-[#eee8dd] pb-3 text-[13px] font-black uppercase tracking-[.12em] text-[#123f72]">Shop all</Link><Link onClick={() => setOpen(false)} href="/new-arrivals" className="border-b border-[#eee8dd] pb-3 text-[13px] font-black uppercase tracking-[.12em] text-[#123f72]">New arrivals</Link><Link onClick={() => setOpen(false)} href="/sale" className="border-b border-[#eee8dd] pb-3 text-[13px] font-black uppercase tracking-[.12em] text-[#bb492d]">Sale</Link><Link href="/track-order" onClick={() => setOpen(false)} className="pt-1 text-[11px] font-extrabold uppercase tracking-[.12em] text-[#bb492d]">Track your order</Link></div></div>}</header>;
+  return <header className="bg-[#f9f6ef]"><div className="announcement-bar"><p><PackageCheck size={12} /> A considered edit for every day — complimentary delivery on orders over PKR 5,000</p><Link className="announcement-link" href="/track-order">Track your order <ArrowRight size={12} /></Link></div><div className="container header-main"><Link href="/" className="brand-lockup" aria-label="ALRAHEEM COLLECTION 786 home"><img className="brand-logo" src={LOGO} alt="ALRAHEEM COLLECTION 786 official logo" fetchPriority="high" decoding="async" /></Link><div className="relative"><form className="search-field" onSubmit={submitSearch}><Search size={17} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search the collection" aria-label="Search the collection" aria-expanded={suggestions.length > 0} aria-controls="search-suggestions" /><button type="submit" aria-label="Search"><ArrowRight size={15} /></button></form>{suggestions.length ? <div id="search-suggestions" className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden border border-[#d8d0c2] bg-[#fffdf9] shadow-xl"><p className="px-4 pt-3 text-[9px] font-extrabold uppercase tracking-[.13em] text-[#58708a]">Suggestions</p>{suggestions.map(product => <Link key={product.handle} href={`/product/${product.handle}`} onClick={() => setQuery("")} className="flex items-center gap-3 px-4 py-3 text-sm text-[#123f72] hover:bg-[#f2ede4]"><img className="h-10 w-8 object-cover" src={product.images[0]?.url ?? STORE_CATEGORIES[0].image} alt="" /><span className="min-w-0 flex-1 truncate font-bold">{product.title}</span><span className="text-xs text-[#bb492d]">{formatMoney(product.priceRange.min)}</span></Link>)}</div> : null}</div><div className="header-actions"><Link href="/account" aria-label="Customer account"><UserRound size={20} /></Link><Link href="/wishlist" aria-label="View saved items" className="relative"><Heart size={20} />{count > 0 && <span className="count-badge">{count}</span>}</Link><button type="button" aria-label="Open shopping bag" onClick={openCart}><ShoppingBag size={20} />{itemCount > 0 && <span className="count-badge">{itemCount}</span>}</button><button className="mobile-menu-button" type="button" onClick={() => setOpen(value => !value)} aria-label="Toggle navigation">{open ? <X size={22} /> : <Menu size={22} />}</button></div></div><nav className="main-nav main-nav--primary" aria-label="Primary navigation"><Link href="/shop">Shop all</Link><Link href="/new-arrivals">New arrivals</Link><Link href="/sale">Sale</Link></nav>{open && <div className="border-t border-[#d8d0c2] bg-[#fffdf9] px-5 py-4 md:hidden"><div className="grid gap-3"><Link onClick={() => setOpen(false)} href="/shop" className="border-b border-[#eee8dd] pb-3 text-[13px] font-black uppercase tracking-[.12em] text-[#123f72]">Shop all</Link><Link onClick={() => setOpen(false)} href="/new-arrivals" className="border-b border-[#eee8dd] pb-3 text-[13px] font-black uppercase tracking-[.12em] text-[#123f72]">New arrivals</Link><Link onClick={() => setOpen(false)} href="/sale" className="border-b border-[#eee8dd] pb-3 text-[13px] font-black uppercase tracking-[.12em] text-[#bb492d]">Sale</Link><Link href="/account" onClick={() => setOpen(false)} className="border-b border-[#eee8dd] pb-3 text-[11px] font-extrabold uppercase tracking-[.12em] text-[#123f72]">My account</Link><Link href="/track-order" onClick={() => setOpen(false)} className="pt-1 text-[11px] font-extrabold uppercase tracking-[.12em] text-[#bb492d]">Track your order</Link></div></div>}</header>;
 }
 
 function Footer() {
@@ -75,5 +85,5 @@ function Footer() {
 }
 
 export default function StoreShell({ children }: { children: ReactNode }) {
-  return <><Header /><main>{children}</main><Footer /><CartDrawer /><a href={createStoreWhatsAppUrl()} target="_blank" rel="noreferrer" aria-label="Order on WhatsApp" className="fixed bottom-5 right-5 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#25D366] px-4 text-[10px] font-extrabold uppercase tracking-[.12em] text-[#062e19] shadow-lg shadow-[#062e19]/20 transition hover:-translate-y-0.5 hover:bg-[#1fb85a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#123f72]"><MessageCircle size={18} fill="currentColor" /> WhatsApp</a></>;
+  return <><Header /><main>{children}</main><Footer /><CartDrawer /><StoreGuide /><a href={createStoreWhatsAppUrl()} target="_blank" rel="noreferrer" aria-label="Order on WhatsApp" className="fixed bottom-5 right-5 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#25D366] px-4 text-[10px] font-extrabold uppercase tracking-[.12em] text-[#062e19] shadow-lg shadow-[#062e19]/20 transition hover:-translate-y-0.5 hover:bg-[#1fb85a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#123f72]"><MessageCircle size={18} fill="currentColor" /> WhatsApp</a></>;
 }

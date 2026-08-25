@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { handler } from "../netlify/functions/api";
 import { createProductOrderUrl } from "../client/src/lib/commerce";
 import { clearProductListCache } from "./_core/shopify";
-import { STOREFRONT_TRPC_PATHS, createNetlifyStorefrontApp } from "./_core/storefrontApp";
+import { SHOPIFY_PAID_ORDER_WEBHOOK_PATHS, STOREFRONT_TRPC_PATHS, createNetlifyStorefrontApp } from "./_core/storefrontApp";
 import { appRouter } from "./routers";
 import { storefrontRouter } from "./routers/storefront";
 
@@ -51,12 +51,14 @@ function netlifyEvent(path: string, method: "GET" | "POST", input?: unknown) {
 }
 
 describe("Netlify storefront adapter", () => {
-  it("reuses the exact Shopify commerce router and exposes no Manus-only router namespaces", () => {
+  it("reuses the commerce router and exposes only independent public storefront namespaces", () => {
     const record = (storefrontRouter as any)._def.record;
     const managedRecord = (appRouter as any)._def.record;
 
-    expect(Object.keys(record)).toEqual(["commerce"]);
+    expect(Object.keys(record)).toEqual(["commerce", "customer", "guide"]);
     expect(record.commerce).toStrictEqual(managedRecord.commerce);
+    expect(record.customer).toStrictEqual(managedRecord.customer);
+    expect(record.guide).toStrictEqual(managedRecord.guide);
   });
 
   it("keeps the client API contract available at both local and Netlify function paths", () => {
@@ -67,6 +69,11 @@ describe("Netlify storefront adapter", () => {
       "/trpc",
     ]);
     expect(app.locals.storefrontTrpcPaths).toEqual(STOREFRONT_TRPC_PATHS);
+  });
+
+  it("reserves signed paid-order paths for real purchase verification", () => {
+    expect(SHOPIFY_PAID_ORDER_WEBHOOK_PATHS).toContain("/api/webhooks/shopify/orders-paid");
+    expect(SHOPIFY_PAID_ORDER_WEBHOOK_PATHS).toContain("/.netlify/functions/api/webhooks/shopify/orders-paid");
   });
 
   it("routes API calls before the SPA fallback and builds the deployed static output", () => {

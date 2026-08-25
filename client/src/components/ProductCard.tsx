@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { formatMoney, primaryVariant } from "@/lib/commerce";
+import { QuickViewDialog } from "@/components/QuickViewDialog";
 
 const FALLBACK_IMAGE = "/manus-storage/alraheem-accessories-flatlay_814b21f8.jpg";
 
@@ -43,6 +44,7 @@ export default function ProductCard({ product, index = 1 }: { product: Product; 
         <button className="quick-add" type="button" disabled={!variant?.availableForSale || loading} onClick={addToBag}>
           <ShoppingBag size={13} /> {variant?.availableForSale ? "Add to bag" : "Unavailable"}
         </button>
+        <QuickViewDialog product={product} />
       </div>
       <div className="product-copy">
         <small>{product.productType || "ALRAHEEM EDIT"}</small>

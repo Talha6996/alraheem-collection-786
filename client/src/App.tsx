@@ -8,10 +8,12 @@ import Home from "./pages/Home";
 // The landing route stays eager for the quickest first view. Every secondary
 // page is downloaded only when a shopper navigates to it.
 const Bag = lazy(() => import("./pages/Bag"));
+const Account = lazy(() => import("./pages/Account"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const PromotionCatalogue = lazy(() => import("./pages/PromotionCatalogue"));
+const Referral = lazy(() => import("./pages/Referral"));
 const Shop = lazy(() => import("./pages/Shop"));
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
@@ -43,6 +45,8 @@ function Router() {
         <Route path={"/new-arrivals"}>{() => <PromotionCatalogue kind="new" />}</Route>
         <Route path={"/sale"}>{() => <PromotionCatalogue kind="sale" />}</Route>
         <Route path={"/bag"} component={Bag} />
+        <Route path={"/account"} component={Account} />
+        <Route path={"/referral"} component={Referral} />
         <Route path={"/wishlist"} component={Wishlist} />
         <Route path={"/track-order"} component={TrackOrder} />
         <Route path={"/contact"} component={Contact} />

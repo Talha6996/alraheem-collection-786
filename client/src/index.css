@@ -18,6 +18,11 @@
   .product-gallery-magnifier { display: none; }
 }
 
+.quick-view { position: absolute; z-index: 2; bottom: .65rem; left: .65rem; min-height: 32px; padding: 0 .75rem; background: rgba(255,253,249,.94); color: #123f72; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: 0; transform: translateY(6px); transition: opacity 180ms cubic-bezier(.23,1,.32,1), transform 180ms cubic-bezier(.23,1,.32,1), background 180ms cubic-bezier(.23,1,.32,1); }
+.product-card:hover .quick-view, .product-card:focus-within .quick-view { opacity: 1; transform: translateY(0); }
+.quick-view:hover { background: #123f72; color: #fffdf9; }
+@media (max-width: 767px) { .quick-view { opacity: 1; transform: none; } }
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
