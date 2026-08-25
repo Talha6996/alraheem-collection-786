@@ -11,6 +11,8 @@ Never place the Supabase secret/service key or Shopify Admin token in browser co
 
 ## Qualifying-purchase safeguards
 
+**Current status — paused by the owner on 26 August 2026.** Referral-discount activation is not live, no released-app paid-order subscription was created, and no referral reward is issued. The remaining notes document dormant server-side safeguards only; they do not activate the feature.
+
 The required schema in `supabase/customer-data-schema.sql` was applied successfully through a one-time project-restricted management token. That token was deleted immediately after the migration and is no longer active. The schema creates **no fabricated customers, purchases, ratings, reviews, or rewards**. All customer-data tables use row-level security, and the server service key is used only inside Netlify functions.
 
 The protected paid-order endpoint is `/api/webhooks/shopify/orders-paid`. It accepts only a Shopify HMAC-signed order-paid event, records the order and its actual product IDs once, then makes a review possible only when the authenticated customer has a matching recorded purchase. A referral reward can be issued only once after a referred customer’s qualifying paid order. The approved reward is a one-use **17% discount**, generated server-side using a Shopify Admin API token.
@@ -63,3 +65,7 @@ Netlify accepted the temporary token with a single protected Production value. I
 The verifier code deployment was confirmed as published (`main@f63e6b7`, with one function deployed and both redirect rules processed). Its initial call returned the intentional non-descriptive `404`, consistent with the token having been added after that function bundle was published. Netlify was therefore instructed to redeploy the unchanged `main` head so the current runtime receives the temporary token; this action creates no Shopify or customer records.
 
 Because the existing subscription was originally created through the store-management integration, its signing-app ownership cannot be inferred from the read-only subscription listing alone. Do not delete it or create a duplicate automatically. Before replacing it, obtain owner approval and invoke the server-only helper from a protected operational context; then remove the stale subscription only after the released app’s callback is confirmed. No secret, token, or credential value is recorded in this file.
+
+### Retired temporary activation access — 26 August 2026
+
+After the owner paused referral activation, the temporary `SHOPIFY_ACTIVATION_CHECK_TOKEN` was deleted from Netlify Production and the temporary verifier route was removed from the Netlify function code. The permanent signed paid-order route remains in code and continues to require a valid Shopify HMAC; without a released app-specific `orders/paid` subscription, it receives no live referral-processing events. The final cleanup checkpoint is `a5ad19a8`, and its Netlify production deployment has published successfully with two redirect rules and one function deployed. A harmless public request to the retired temporary route returned `404`, while an unsigned empty request to the permanent paid-order route returned `401 Invalid webhook signature`; neither request carried an order payload or created customer, review, reward, discount, or other commerce data.
