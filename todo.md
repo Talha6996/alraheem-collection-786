@@ -190,3 +190,5 @@
 - [x] Add a temporary server-only activation verifier protected by a one-time Netlify secret; it must expose only pass/fail metadata and never expose credentials or customer data.
 - [ ] Deploy and run the protected verifier to confirm the released app’s client-credentials exchange and its own ORDERS_PAID subscription without creating store records.
 - [ ] Remove the temporary verifier and its secret, then reconfirm the permanent webhook rejects invalid signatures.
+- [x] Register the released Shopify app’s own ORDERS_PAID callback through the protected activation route, without creating any customer or commerce data.
+- [ ] Inspect the resulting callbacks and retain the existing callback until owner-approved removal.

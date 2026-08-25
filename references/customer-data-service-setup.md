@@ -29,4 +29,20 @@ Shopify's official client-credentials guide confirms that a Dev Dashboard app ac
 
 The only remaining provider-side proof is a **positive** client-credentials exchange and a signed real `orders/paid` delivery using the released app’s secret. This has deliberately not been simulated with a fabricated order, review, reward, or customer. The server contains an idempotent, server-only helper that checks the released app’s own subscriptions and creates the callback only when that app has none; it has no public trigger and no secret-exposing output.
 
+The owner approved a one-time, temporary verifier to obtain the positive token-exchange and subscription-ownership proof without creating commerce data. The checkpoint containing that verifier is `f63e6b7b`; its Netlify production deployment started on 25 August 2026 and must complete before the verifier secret is configured and the check is run. The endpoint requires a separate `SHOPIFY_ACTIVATION_CHECK_TOKEN`, uses constant-time bearer comparison, returns only pass/fail metadata, and must be removed with the secret immediately after the result is recorded.
+
+Initial Netlify polling showed the verifier deployment still in the building state. No manual deploy, provider mutation, or customer-data operation was performed while it was building.
+
+At the read-only deploy-detail check, Netlify had prepared `main@f63e6b7`, completed dependency installation, and started the configured build script. The log reported only its standard ignored-build-scripts warning; it showed no build failure at that point.
+
+The subsequent deploy log confirmed that Vite completed, the `api.ts` Netlify function was packaged, and Netlify scanned 217 files with no secret detected. At that time the platform was still in its final publishing stage.
+
+The Netlify settings check confirmed that the existing `SHOPIFY_CLIENT_SECRET` remains restricted to Builds, Functions, and Runtime in one deploy context. The separate verifier token will use the same Functions/Runtime production restriction and will be deleted as soon as the result has been recorded.
+
+For the owner-approved one-time check, a separate high-entropy `SHOPIFY_ACTIVATION_CHECK_TOKEN` was generated locally and prepared in Netlify as a masked secret. Its value is intentionally omitted from all source, documentation, logs, and deployment notes.
+
+Netlify accepted the temporary token with a single protected Production value. It is displayed as restricted to Builds, Functions, and Runtime and remains separate from all permanent commerce credentials.
+
+The verifier code deployment was confirmed as published (`main@f63e6b7`, with one function deployed and both redirect rules processed). Its initial call returned the intentional non-descriptive `404`, consistent with the token having been added after that function bundle was published. Netlify was therefore instructed to redeploy the unchanged `main` head so the current runtime receives the temporary token; this action creates no Shopify or customer records.
+
 Because the existing subscription was originally created through the store-management integration, its signing-app ownership cannot be inferred from the read-only subscription listing alone. Do not delete it or create a duplicate automatically. Before replacing it, obtain owner approval and invoke the server-only helper from a protected operational context; then remove the stale subscription only after the released app’s callback is confirmed. No secret, token, or credential value is recorded in this file.

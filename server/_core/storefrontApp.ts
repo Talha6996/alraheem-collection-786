@@ -4,9 +4,10 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { storefrontRouter } from "../routers/storefront";
 import { createStorefrontContext } from "./storefrontContext";
 import {
-  getReleasedAppOrdersPaidSubscription,
-  processShopifyPaidOrder,
-  verifyShopifyWebhook,
+	ensureShopifyOrdersPaidSubscription,
+	getReleasedAppOrdersPaidSubscription,
+	processShopifyPaidOrder,
+	verifyShopifyWebhook,
 } from "./shopifyPaidOrder";
 
 /**
@@ -78,6 +79,19 @@ function addTemporaryShopifyActivationVerifier(app: express.Express) {
       return;
     }
     try {
+		const requestedAction = req.header("x-shopify-activation-action");
+		if (requestedAction === "register-orders-paid") {
+			const result = await ensureShopifyOrdersPaidSubscription();
+			// The subscription identifier is deliberately withheld. This temporary
+			// action is only for the owner-approved registration step and has no
+			// access to orders, customers, rewards, reviews, or discounts.
+			res.status(200).json({
+				tokenExchange: "ok",
+				releasedAppOwnsOrdersPaidSubscription: true,
+				registration: result.created ? "created" : "already-present",
+			});
+			return;
+		}
       const subscription = await getReleasedAppOrdersPaidSubscription();
       // Credentials, access tokens, subscription IDs, order data, and customer
       // data must never leave this function. Only one-time pass/fail metadata

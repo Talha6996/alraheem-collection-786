@@ -95,6 +95,26 @@ describe("Netlify storefront adapter", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("registers only the released app's callback after explicit protected approval without returning its identifier", async () => {
+    process.env.SHOPIFY_ACTIVATION_CHECK_TOKEN = "one-time-test-secret";
+    process.env.SHOPIFY_CLIENT_ID = "released-app-id";
+    process.env.SHOPIFY_CLIENT_SECRET = "released-app-secret";
+    fetchMock
+      .mockResolvedValueOnce(new Response(JSON.stringify({ access_token: "short-lived-token", expires_in: 86_399 }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: { webhookSubscriptions: { nodes: [] } } }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: { webhookSubscriptionCreate: { webhookSubscription: { id: "gid://shopify/WebhookSubscription/2" }, userErrors: [] } } }), { status: 200 }));
+
+    const result = await handler(netlifyEvent("/internal/shopify-activation-verify", "POST", {}, {
+      authorization: "Bearer one-time-test-secret",
+      "x-shopify-activation-action": "register-orders-paid",
+    }));
+
+    expect(result.statusCode).toBe(200);
+    expect(result.body).toContain('"registration":"created"');
+    expect(result.body).not.toContain("WebhookSubscription");
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
   it("routes API calls before the SPA fallback and builds the deployed static output", () => {
     const config = readFileSync(resolve(projectRoot, "netlify.toml"), "utf8");
 
