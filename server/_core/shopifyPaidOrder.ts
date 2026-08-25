@@ -16,9 +16,48 @@ export type ShopifyPaidOrder = {
   line_items?: ShopifyPaidLine[];
 };
 
-function getAdminToken() { return process.env.SHOPIFY_ADMIN_ACCESS_TOKEN ?? ""; }
-function getWebhookSecret() { return process.env.SHOPIFY_WEBHOOK_API_SECRET ?? ""; }
+let cachedAdminToken: { value: string; expiresAt: number } | null = null;
+
+function getLegacyAdminToken() { return process.env.SHOPIFY_ADMIN_ACCESS_TOKEN ?? ""; }
+function getClientId() { return process.env.SHOPIFY_CLIENT_ID ?? ""; }
+function getClientSecret() { return process.env.SHOPIFY_CLIENT_SECRET ?? ""; }
+function getWebhookSecret() { return process.env.SHOPIFY_WEBHOOK_API_SECRET ?? getClientSecret(); }
 function getStoreDomain() { return process.env.SHOPIFY_STORE_DOMAIN ?? ""; }
+
+/**
+ * Shopify Dev Dashboard apps exchange their client credentials for a short-lived
+ * Admin API token. The token is never sent to the storefront browser and is
+ * refreshed one minute before Shopify's 24-hour expiry.
+ */
+export async function getShopifyAdminAccessToken() {
+  const legacyToken = getLegacyAdminToken();
+  if (legacyToken) return legacyToken;
+  if (cachedAdminToken && Date.now() < cachedAdminToken.expiresAt - 60_000) return cachedAdminToken.value;
+
+  const domain = getStoreDomain();
+  const clientId = getClientId();
+  const clientSecret = getClientSecret();
+  if (!domain || !clientId || !clientSecret) throw new Error("Shopify server credentials are incomplete.");
+
+  const response = await fetch(`https://${domain}/admin/oauth/access_token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: clientId,
+      client_secret: clientSecret,
+    }),
+  });
+  if (!response.ok) throw new Error(`Shopify token request failed with HTTP ${response.status}.`);
+  const payload = await response.json() as { access_token?: string; expires_in?: number };
+  if (!payload.access_token || !payload.expires_in) throw new Error("Shopify token response was incomplete.");
+  cachedAdminToken = { value: payload.access_token, expiresAt: Date.now() + payload.expires_in * 1_000 };
+  return cachedAdminToken.value;
+}
+
+export function resetShopifyAdminTokenCache() {
+  cachedAdminToken = null;
+}
 
 export function verifyShopifyWebhook(rawBody: Buffer, hmacHeader?: string) {
   const secret = getWebhookSecret();
@@ -33,7 +72,7 @@ export const REFERRAL_DISCOUNT_PERCENT = 17;
 
 async function createReferralDiscount(code: string) {
   const domain = getStoreDomain();
-  const token = getAdminToken();
+  const token = await getShopifyAdminAccessToken();
   if (!domain || !token) throw new Error("Shopify reward configuration is incomplete.");
   const query = `mutation DiscountCodeBasicCreate($basicCodeDiscount: DiscountCodeBasicInput!) {
     discountCodeBasicCreate(basicCodeDiscount: $basicCodeDiscount) {

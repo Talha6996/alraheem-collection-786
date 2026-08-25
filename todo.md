@@ -184,3 +184,4 @@
 - [ ] Add tests and production-build coverage for the customer, discovery, simulated-viewer, referral, review, and chatbot features.
 - [x] Prevent the account preferences form from replacing existing profile fields with empty values when the customer submits without editing them.
 - [x] Restore Netlify production deployment by exempting only the non-secret Supabase project URL from secret scanning; preserve secret-key scanning.
+- [ ] Activate paid-order verification and 17% referral rewards through Shopify’s server-only client-credentials token flow and signed orders/paid event subscription.
