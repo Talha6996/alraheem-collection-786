@@ -1,15 +1,10 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { handler } from "../netlify/functions/api";
 import { createProductOrderUrl } from "../client/src/lib/commerce";
 import { clearProductListCache } from "./_core/shopify";
-import {
-  SHOPIFY_ACTIVATION_VERIFIER_PATHS,
-  SHOPIFY_PAID_ORDER_WEBHOOK_PATHS,
-  STOREFRONT_TRPC_PATHS,
-  createNetlifyStorefrontApp,
-} from "./_core/storefrontApp";
+import { SHOPIFY_PAID_ORDER_WEBHOOK_PATHS, STOREFRONT_TRPC_PATHS, createNetlifyStorefrontApp } from "./_core/storefrontApp";
 import { appRouter } from "./routers";
 import { storefrontRouter } from "./routers/storefront";
 
@@ -22,11 +17,6 @@ beforeEach(() => {
   vi.stubGlobal("fetch", fetchMock);
   process.env.SHOPIFY_STORE_DOMAIN = "test.myshopify.com";
   process.env.SHOPIFY_STOREFRONT_API_ACCESS_TOKEN = "test-token";
-});
-
-afterEach(() => {
-  delete process.env.SHOPIFY_ACTIVATION_CHECK_TOKEN;
-  vi.unstubAllGlobals();
 });
 
 function ok(data: unknown) {
@@ -80,39 +70,6 @@ describe("Netlify storefront adapter", () => {
   it("reserves signed paid-order paths for real purchase verification", () => {
     expect(SHOPIFY_PAID_ORDER_WEBHOOK_PATHS).toContain("/api/webhooks/shopify/orders-paid");
     expect(SHOPIFY_PAID_ORDER_WEBHOOK_PATHS).toContain("/.netlify/functions/api/webhooks/shopify/orders-paid");
-  });
-
-  it("keeps the temporary activation verifier separate from public tRPC routes", () => {
-    expect(SHOPIFY_ACTIVATION_VERIFIER_PATHS).toContain("/api/internal/shopify-activation-verify");
-    expect(STOREFRONT_TRPC_PATHS).not.toContain("/api/internal/shopify-activation-verify");
-  });
-
-  it("requires the temporary one-time verifier secret before attempting an Admin API check", async () => {
-    process.env.SHOPIFY_ACTIVATION_CHECK_TOKEN = "one-time-test-secret";
-    const result = await handler(netlifyEvent("/internal/shopify-activation-verify", "POST", {}));
-
-    expect(result.statusCode).toBe(404);
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it("registers only the released app's callback after explicit protected approval without returning its identifier", async () => {
-    process.env.SHOPIFY_ACTIVATION_CHECK_TOKEN = "one-time-test-secret";
-    process.env.SHOPIFY_CLIENT_ID = "released-app-id";
-    process.env.SHOPIFY_CLIENT_SECRET = "released-app-secret";
-    fetchMock
-      .mockResolvedValueOnce(new Response(JSON.stringify({ access_token: "short-lived-token", expires_in: 86_399 }), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ data: { webhookSubscriptions: { nodes: [] } } }), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ data: { webhookSubscriptionCreate: { webhookSubscription: { id: "gid://shopify/WebhookSubscription/2" }, userErrors: [] } } }), { status: 200 }));
-
-    const result = await handler(netlifyEvent("/internal/shopify-activation-verify", "POST", {}, {
-      authorization: "Bearer one-time-test-secret",
-      "x-shopify-activation-action": "register-orders-paid",
-    }));
-
-    expect(result.statusCode).toBe(200);
-    expect(result.body).toContain('"registration":"created"');
-    expect(result.body).not.toContain("WebhookSubscription");
-    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
   it("routes API calls before the SPA fallback and builds the deployed static output", () => {

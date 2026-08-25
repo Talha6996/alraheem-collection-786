@@ -194,6 +194,7 @@
 - [ ] Inspect the resulting callbacks and retain the existing callback until owner-approved removal.
 - [ ] Inspect the released Shopify app’s Webhooks configuration in the connected browser and configure the required `orders/paid` app-specific subscription if the visible controls permit it.
 - [ ] Link a temporary local Shopify app configuration, declare the `orders/paid` app-specific HTTPS subscription, and deploy the new app version using Shopify’s supported CLI workflow.
-- [ ] Pause all Shopify referral-discount activation and remove temporary activation access without changing customer data or existing order processing.
+- [x] Pause all Shopify referral-discount activation and remove temporary activation access without changing customer data or existing order processing.
+- [x] Retire the temporary activation verifier route and its activation tests from the Netlify function while preserving the signed paid-order webhook gate.
 - [x] Display Shopify compare-at (old) price and sale price together across product cards, quick view, product pages, cart, and checkout-facing summaries when a genuine sale is present.
 - [x] Add regression coverage and production verification for old-price/sale-price display and existing single-price products.
