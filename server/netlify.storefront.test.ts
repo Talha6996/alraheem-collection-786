@@ -4,7 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { handler } from "../netlify/functions/api";
 import { createProductOrderUrl } from "../client/src/lib/commerce";
 import { clearProductListCache } from "./_core/shopify";
-import { SHOPIFY_PAID_ORDER_WEBHOOK_PATHS, STOREFRONT_TRPC_PATHS, createNetlifyStorefrontApp } from "./_core/storefrontApp";
+import {
+  SHOPIFY_ACTIVATION_VERIFIER_PATHS,
+  SHOPIFY_PAID_ORDER_WEBHOOK_PATHS,
+  STOREFRONT_TRPC_PATHS,
+  createNetlifyStorefrontApp,
+} from "./_core/storefrontApp";
 import { appRouter } from "./routers";
 import { storefrontRouter } from "./routers/storefront";
 
@@ -20,6 +25,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  delete process.env.SHOPIFY_ACTIVATION_CHECK_TOKEN;
   vi.unstubAllGlobals();
 });
 
@@ -32,7 +38,7 @@ function ok(data: unknown) {
   } as Response);
 }
 
-function netlifyEvent(path: string, method: "GET" | "POST", input?: unknown) {
+function netlifyEvent(path: string, method: "GET" | "POST", input?: unknown, headers?: Record<string, string>) {
   const query =
     method === "GET"
       ? `batch=1&input=${encodeURIComponent(JSON.stringify({ 0: { json: input ?? null } }))}`
@@ -42,7 +48,7 @@ function netlifyEvent(path: string, method: "GET" | "POST", input?: unknown) {
     path,
     rawUrl: `https://store.example${path}${query ? `?${query}` : ""}`,
     rawQuery: query,
-    headers: method === "POST" ? { "content-type": "application/json" } : {},
+    headers: { ...(method === "POST" ? { "content-type": "application/json" } : {}), ...headers },
     queryStringParameters: method === "GET" ? { batch: "1", input: JSON.stringify({ 0: { json: input ?? null } }) } : null,
     multiValueQueryStringParameters: null,
     body: method === "POST" ? JSON.stringify({ json: input }) : null,
@@ -74,6 +80,19 @@ describe("Netlify storefront adapter", () => {
   it("reserves signed paid-order paths for real purchase verification", () => {
     expect(SHOPIFY_PAID_ORDER_WEBHOOK_PATHS).toContain("/api/webhooks/shopify/orders-paid");
     expect(SHOPIFY_PAID_ORDER_WEBHOOK_PATHS).toContain("/.netlify/functions/api/webhooks/shopify/orders-paid");
+  });
+
+  it("keeps the temporary activation verifier separate from public tRPC routes", () => {
+    expect(SHOPIFY_ACTIVATION_VERIFIER_PATHS).toContain("/api/internal/shopify-activation-verify");
+    expect(STOREFRONT_TRPC_PATHS).not.toContain("/api/internal/shopify-activation-verify");
+  });
+
+  it("requires the temporary one-time verifier secret before attempting an Admin API check", async () => {
+    process.env.SHOPIFY_ACTIVATION_CHECK_TOKEN = "one-time-test-secret";
+    const result = await handler(netlifyEvent("/internal/shopify-activation-verify", "POST", {}));
+
+    expect(result.statusCode).toBe(404);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("routes API calls before the SPA fallback and builds the deployed static output", () => {

@@ -1,8 +1,13 @@
+import { timingSafeEqual } from "node:crypto";
 import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { storefrontRouter } from "../routers/storefront";
 import { createStorefrontContext } from "./storefrontContext";
-import { processShopifyPaidOrder, verifyShopifyWebhook } from "./shopifyPaidOrder";
+import {
+  getReleasedAppOrdersPaidSubscription,
+  processShopifyPaidOrder,
+  verifyShopifyWebhook,
+} from "./shopifyPaidOrder";
 
 /**
  * Netlify rewrites `/api/*` to this function path. Keeping both mounts means
@@ -20,6 +25,22 @@ export const SHOPIFY_PAID_ORDER_WEBHOOK_PATHS = [
   "/.netlify/functions/api/webhooks/shopify/orders-paid",
   "/webhooks/shopify/orders-paid",
 ];
+
+// Temporary operational route. It is never linked from the storefront and is
+// removed immediately after the owner-approved one-time activation check.
+export const SHOPIFY_ACTIVATION_VERIFIER_PATHS = [
+  "/api/internal/shopify-activation-verify",
+  "/.netlify/functions/api/internal/shopify-activation-verify",
+  "/internal/shopify-activation-verify",
+];
+
+function verifierSecretMatches(provided: string | undefined) {
+  const expected = process.env.SHOPIFY_ACTIVATION_CHECK_TOKEN;
+  if (!provided || !expected) return false;
+  const providedBuffer = Buffer.from(provided);
+  const expectedBuffer = Buffer.from(expected);
+  return providedBuffer.length === expectedBuffer.length && timingSafeEqual(providedBuffer, expectedBuffer);
+}
 
 function addBodyParsers(app: express.Express) {
   app.use(express.json({ limit: "50mb" }));
@@ -47,6 +68,31 @@ function addShopifyPaidOrderWebhook(app: express.Express) {
   });
 }
 
+function addTemporaryShopifyActivationVerifier(app: express.Express) {
+  app.post(SHOPIFY_ACTIVATION_VERIFIER_PATHS, async (req, res) => {
+    const authorization = req.header("authorization");
+    const bearer = authorization?.startsWith("Bearer ") ? authorization.slice(7) : undefined;
+    if (!verifierSecretMatches(bearer)) {
+      // A non-descriptive response avoids advertising an operational endpoint.
+      res.status(404).end();
+      return;
+    }
+    try {
+      const subscription = await getReleasedAppOrdersPaidSubscription();
+      // Credentials, access tokens, subscription IDs, order data, and customer
+      // data must never leave this function. Only one-time pass/fail metadata
+      // is returned to the holder of the temporary Netlify secret.
+      res.status(200).json({
+        tokenExchange: "ok",
+        releasedAppOwnsOrdersPaidSubscription: Boolean(subscription),
+      });
+    } catch (error) {
+      console.error("[shopify-activation-verifier] verification failed", error instanceof Error ? error.message : "unknown error");
+      res.status(502).json({ verification: "failed" });
+    }
+  });
+}
+
 /**
  * Public, Shopify-only application used by Netlify Functions. It deliberately
  * excludes Manus OAuth, storage proxy, and notification routes. The commerce
@@ -56,6 +102,7 @@ function addShopifyPaidOrderWebhook(app: express.Express) {
 export function createNetlifyStorefrontApp() {
   const app = express();
   addShopifyPaidOrderWebhook(app);
+  addTemporaryShopifyActivationVerifier(app);
   addBodyParsers(app);
   app.locals.storefrontTrpcPaths = STOREFRONT_TRPC_PATHS;
   app.use(

@@ -98,7 +98,7 @@ async function shopifyAdminGraphql<T>(query: string, variables?: Record<string, 
  * called from public traffic: an owner-only operational action must invoke it.
  * That keeps Admin credentials and subscription management server-only.
  */
-export async function ensureShopifyOrdersPaidSubscription() {
+export async function getReleasedAppOrdersPaidSubscription() {
   const listQuery = `query { webhookSubscriptions(first: 50) {
     nodes {
       id
@@ -123,7 +123,17 @@ export async function ensureShopifyOrdersPaidSubscription() {
     subscription.topic === SHOPIFY_ORDERS_PAID_TOPIC
     && subscription.endpoint?.callbackUrl === SHOPIFY_ORDERS_PAID_CALLBACK_URL
   );
-  if (matching) return { created: false, subscriptionId: matching.id };
+  return matching ? { subscriptionId: matching.id } : null;
+}
+
+/**
+ * Idempotently creates the callback only after a protected operational action.
+ * The temporary activation verifier deliberately calls the read-only helper
+ * above instead, so verification cannot create a second subscription.
+ */
+export async function ensureShopifyOrdersPaidSubscription() {
+  const matching = await getReleasedAppOrdersPaidSubscription();
+  if (matching) return { created: false, subscriptionId: matching.subscriptionId };
 
   const createMutation = `mutation createOrdersPaidSubscription($topic: WebhookSubscriptionTopic!, $webhookSubscription: WebhookSubscriptionInput!) {
     webhookSubscriptionCreate(topic: $topic, webhookSubscription: $webhookSubscription) {

@@ -187,3 +187,6 @@
 - [ ] Activate paid-order verification and 17% referral rewards through Shopify’s server-only client-credentials token flow and signed orders/paid event subscription.
 - [x] Add a server-only, owner-safe validation path for the released Shopify app’s client credentials and subscription ownership, without exposing secrets or generating customer data.
 - [x] Make the live Storefront cart-update result resilient to Shopify’s occasional stale mutation response and cover the consistency refresh.
+- [x] Add a temporary server-only activation verifier protected by a one-time Netlify secret; it must expose only pass/fail metadata and never expose credentials or customer data.
+- [ ] Deploy and run the protected verifier to confirm the released app’s client-credentials exchange and its own ORDERS_PAID subscription without creating store records.
+- [ ] Remove the temporary verifier and its secret, then reconfirm the permanent webhook rejects invalid signatures.

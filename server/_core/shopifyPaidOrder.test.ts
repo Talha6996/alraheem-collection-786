@@ -4,6 +4,7 @@ import {
   REFERRAL_DISCOUNT_PERCENT,
   SHOPIFY_ORDERS_PAID_CALLBACK_URL,
   ensureShopifyOrdersPaidSubscription,
+  getReleasedAppOrdersPaidSubscription,
   getShopifyAdminAccessToken,
   resetShopifyAdminTokenCache,
   verifyShopifyWebhook,
@@ -80,6 +81,22 @@ describe("verifyShopifyWebhook", () => {
     await expect(ensureShopifyOrdersPaidSubscription()).resolves.toEqual({ created: false, subscriptionId: "gid://shopify/WebhookSubscription/1" });
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(String(fetchMock.mock.calls[1]?.[1]?.body)).toContain("webhookSubscriptions");
+  });
+
+  it("checks released-app subscription ownership without creating a subscription", async () => {
+    process.env.SHOPIFY_STORE_DOMAIN = "alraheem786-9khraaqr-anchor-cedar-jcs11ees.myshopify.com";
+    process.env.SHOPIFY_CLIENT_ID = "client-id";
+    process.env.SHOPIFY_CLIENT_SECRET = "client-secret";
+    delete process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ access_token: "short-lived-token", expires_in: 86_399 }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        data: { webhookSubscriptions: { nodes: [{ id: "gid://shopify/WebhookSubscription/1", topic: "ORDERS_PAID", endpoint: { __typename: "WebhookHttpEndpoint", callbackUrl: SHOPIFY_ORDERS_PAID_CALLBACK_URL } }] } },
+      }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(getReleasedAppOrdersPaidSubscription()).resolves.toEqual({ subscriptionId: "gid://shopify/WebhookSubscription/1" });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("creates one paid-order subscription only when the released app does not yet have one", async () => {
