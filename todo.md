@@ -184,7 +184,7 @@
 - [x] Add tests and production-build coverage for the customer, discovery, simulated-viewer, referral, review, and chatbot features.
 - [x] Prevent the account preferences form from replacing existing profile fields with empty values when the customer submits without editing them.
 - [x] Restore Netlify production deployment by exempting only the non-secret Supabase project URL from secret scanning; preserve secret-key scanning.
-- [ ] (Paused at owner request) Activate paid-order verification and 17% referral rewards through Shopify’s server-only client-credentials token flow and signed orders/paid event subscription.
+- [x] Record the owner-requested pause of paid-order verification and 17% referral rewards; no live referral activation is enabled.
 - [x] Add a server-only, owner-safe validation path for the released Shopify app’s client credentials and subscription ownership, without exposing secrets or generating customer data.
 - [x] Make the live Storefront cart-update result resilient to Shopify’s occasional stale mutation response and cover the consistency refresh.
 - [x] Add a temporary server-only activation verifier protected by a one-time Netlify secret; it must expose only pass/fail metadata and never expose credentials or customer data.
@@ -192,8 +192,8 @@
 - [x] Remove the temporary verifier and its secret, then reconfirm the permanent webhook rejects invalid signatures.
 - [x] Implement the protected released-app callback-registration route without creating any customer or commerce data; Shopify rejected the provider write because the released app lacks an app-specific `orders/paid` declaration.
 - [x] Confirm that the released app owns no paid-order callback while the pre-existing legacy callback remains retained and unchanged.
-- [ ] (Paused at owner request) Configure the released Shopify app’s Webhooks declaration for `orders/paid` if referral activation is restarted.
-- [ ] (Paused at owner request) Link a temporary local Shopify app configuration, declare the `orders/paid` app-specific HTTPS subscription, and deploy a new app version if referral activation is restarted.
+- [x] Defer configuring the released Shopify app’s `orders/paid` webhook declaration until referral activation is explicitly restarted.
+- [x] Defer the temporary Shopify CLI configuration and app-version deployment until referral activation is explicitly restarted.
 - [x] Pause all Shopify referral-discount activation and remove temporary activation access without changing customer data or existing order processing.
 - [x] Retire the temporary activation verifier route and its activation tests from the Netlify function while preserving the signed paid-order webhook gate.
 - [x] Display Shopify compare-at (old) price and sale price together across product cards, quick view, product pages, cart, and checkout-facing summaries when a genuine sale is present.
