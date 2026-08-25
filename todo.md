@@ -201,4 +201,4 @@
 - [x] Style genuine original prices as smaller red strikethrough text and sale prices as larger bold black text across every storefront sale-price surface.
 - [x] Add regression coverage and visual verification for the requested sale-price typography, colour, and hierarchy.
 - [x] Update the server-only Store Guide to use the supported Gemini interaction model and parse its current response format without exposing credentials.
-- [ ] Verify the repaired Store Guide locally and after production deployment, including a normal greeting.
+- [x] Verify the repaired Store Guide locally and after production deployment, including a normal greeting.
