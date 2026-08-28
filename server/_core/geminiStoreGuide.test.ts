@@ -19,11 +19,52 @@ describe("Gemini storefront guide", () => {
     expect(JSON.parse(String(requestOptions.body))).toMatchObject({ model: "gemini-3.6-flash" });
   });
 
+  it("includes professional instructions and conversation context in the server request", async () => {
+    vi.stubEnv("GEMINI_API_KEY", "server-only-key");
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ output_text: "For Lahore, delivery is estimated at 2–4 working days." }) });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await askGeminiStoreGuide("How long will it take?", [{ role: "user", content: "I am ordering a ladies suit." }]);
+
+    const requestOptions = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    const body = JSON.parse(String(requestOptions.body));
+    expect(body.input).toContain("Answer the shopper's latest question directly and specifically");
+    expect(body.input).toContain("I am ordering a ladies suit.");
+    expect(body.input).toContain("2–4 working days");
+    expect(body.input).toContain("Never invent a price, discount, stock quantity");
+  });
+
   it("returns a helpful greeting when the provider is temporarily unavailable", async () => {
     vi.stubEnv("GEMINI_API_KEY", "server-only-key");
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 503 }));
 
-    await expect(askGeminiStoreGuide("hi", [])).resolves.toContain("Hello!");
+    await expect(askGeminiStoreGuide("hi", [])).resolves.toContain("Welcome to ALRAHEEM COLLECTION 786");
+  });
+
+  it("answers city-specific delivery questions safely during provider fallback", async () => {
+    vi.stubEnv("GEMINI_API_KEY", "server-only-key");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+
+    await expect(askGeminiStoreGuide("How long to Lahore and what is delivery fee?", [])).resolves.toContain("2–4 working days");
+    await expect(askGeminiStoreGuide("How much is delivery?", [])).resolves.toContain("PKR 250");
+  });
+
+  it("answers payment questions without promising unverified payment methods", async () => {
+    vi.stubEnv("GEMINI_API_KEY", "server-only-key");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+
+    const answer = await askGeminiStoreGuide("Can I pay with JazzCash or card?", []);
+    expect(answer).toContain("confirm with our team");
+    expect(answer).toContain("+92 336 1243334");
+  });
+
+  it("guides product questions to the product page and WhatsApp without guessing", async () => {
+    vi.stubEnv("GEMINI_API_KEY", "server-only-key");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+
+    const answer = await askGeminiStoreGuide("Is the blue bridal set in stock and what size is it?", []);
+    expect(answer).toContain("product page");
+    expect(answer).toContain("WhatsApp");
   });
 
   it("reads text from Gemini's current interaction steps response", async () => {
