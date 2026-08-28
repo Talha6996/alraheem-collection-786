@@ -205,4 +205,4 @@
 
 - [x] Upgrade the Store Guide prompt and response logic so customer questions receive professional, intent-specific answers grounded in verified store information.
 - [x] Add regression tests for greetings, delivery, payment, ordering, categories, product questions, unsupported requests, and provider failures.
-- [ ] Verify the upgraded Store Guide locally and on the live Netlify storefront.
+- [x] Verify the upgraded Store Guide locally and on the live Netlify storefront.
