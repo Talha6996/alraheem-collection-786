@@ -209,7 +209,7 @@
 
 - [x] Add instant verified answers for common Store Guide questions so routine requests do not wait for Gemini.
 - [x] Add a bounded AI timeout and responsive fallback so slow provider requests cannot leave shoppers waiting indefinitely.
-- [ ] Test and live-verify rapid Store Guide responses without weakening accuracy or server-only key protection.
+- [x] Test and live-verify rapid Store Guide responses without weakening accuracy or server-only key protection.
 
 - [x] Make the Store Guide return relevant answers for broad store-related questions instead of a generic fallback.
 - [x] Return live Shopify product cards when a shopper asks for a supported category in chat.
@@ -218,4 +218,4 @@
 
 - [x] Show verified routine Store Guide answers immediately in the chat without waiting for the serverless request.
 - [x] Keep category product cards loading live in the background after the instant category answer.
-- [ ] Validate fast client behavior and publish the final speed improvement.
+- [x] Validate fast client behavior and publish the final speed improvement.
