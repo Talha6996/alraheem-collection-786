@@ -15,6 +15,7 @@ import { Streamdown } from "streamdown";
 export type Message = {
   role: "system" | "user" | "assistant";
   content: string;
+  id?: string;
   products?: Product[];
   category?: { name: string; href: string };
 };

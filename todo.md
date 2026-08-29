@@ -214,4 +214,4 @@
 - [x] Make the Store Guide return relevant answers for broad store-related questions instead of a generic fallback.
 - [x] Return live Shopify product cards when a shopper asks for a supported category in chat.
 - [x] Add typed tests for category detection, live product-card data, and graceful empty/error states.
-- [ ] Verify the updated chat locally and save a checkpoint after validation.
+- [x] Verify the updated chat locally and save a checkpoint after validation.

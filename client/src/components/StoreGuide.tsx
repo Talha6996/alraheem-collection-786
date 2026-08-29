@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { AIChatBox, type Message } from "@/components/AIChatBox";
 import { trpc } from "@/lib/trpc";
@@ -8,8 +8,17 @@ const STARTER: Message = { role: "assistant", content: "Welcome to ALRAHEEM COLL
 export function StoreGuide() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([STARTER]);
+  const requestSequence = useRef(0);
+  const catalogue = trpc.useUtils();
   const guide = trpc.guide.ask.useMutation({
-    onSuccess: ({ answer, category, products }) => setMessages(current => [...current, { role: "assistant", content: answer, category, products }]),
+    onSuccess: ({ answer, category }) => {
+      const requestId = `guide-${++requestSequence.current}`;
+      setMessages(current => [...current, { id: requestId, role: "assistant", content: answer, category }]);
+      if (!category) return;
+      void catalogue.commerce.products.list.fetch({ collectionHandle: category.collectionHandle, first: 6, sort: "TITLE" })
+        .then(products => setMessages(current => current.map(item => item.id === requestId ? { ...item, products } : item)))
+        .catch(() => setMessages(current => current.map(item => item.id === requestId ? { ...item, products: [] } : item)));
+    },
     onError: () => setMessages(current => [...current, { role: "assistant", content: "I’m unable to answer that just now. Please message our team on WhatsApp for help." }]),
   });
 

@@ -113,16 +113,13 @@ describe("commerce.products", () => {
 });
 
 describe("guide.ask", () => {
-  it("returns live products and collection metadata for a category request", async () => {
-    ok({ collection: { products: { edges: [{ node: rawProduct }] } } });
-
+  it("returns category metadata immediately without blocking on Shopify", async () => {
     const caller = appRouter.createCaller(makeCtx());
     const response = await caller.guide.ask({ message: "Show me jewellery", history: [] });
 
     expect(response.category).toMatchObject({ name: "JEWELLERY", collectionHandle: "jewellery", href: "/shop?category=jewellery" });
-    expect(response.products).toHaveLength(1);
-    expect(response.products?.[0]).toMatchObject({ handle: "aria", title: "Aria" });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(response).not.toHaveProperty("products");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("keeps non-category answers lightweight without a product lookup", async () => {
