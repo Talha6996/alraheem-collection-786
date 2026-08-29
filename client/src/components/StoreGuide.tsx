@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { AIChatBox, type Message } from "@/components/AIChatBox";
 import { trpc } from "@/lib/trpc";
+import { getInstantGuideReply } from "@/lib/storeGuideInstant";
 
 const STARTER: Message = { role: "assistant", content: "Welcome to ALRAHEEM COLLECTION 786. I can help you browse categories, explain delivery, or guide you to WhatsApp ordering." };
 
@@ -28,6 +29,17 @@ export function StoreGuide() {
       .slice(-6)
       .map(item => ({ role: item.role === "assistant" ? "assistant" as const : "user" as const, content: item.content }));
     setMessages(current => [...current, { role: "user", content: message }]);
+    const instantReply = getInstantGuideReply(message);
+    if (instantReply) {
+      const requestId = `guide-${++requestSequence.current}`;
+      setMessages(current => [...current, { id: requestId, role: "assistant", content: instantReply.content, category: instantReply.category }]);
+      if (instantReply.category) {
+        void catalogue.commerce.products.list.fetch({ collectionHandle: instantReply.category.collectionHandle, first: 6, sort: "TITLE" })
+          .then(products => setMessages(current => current.map(item => item.id === requestId ? { ...item, products } : item)))
+          .catch(() => setMessages(current => current.map(item => item.id === requestId ? { ...item, products: [] } : item)));
+      }
+      return;
+    }
     guide.mutate({ message, history });
   };
 

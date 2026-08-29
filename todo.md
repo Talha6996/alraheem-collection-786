@@ -215,3 +215,7 @@
 - [x] Return live Shopify product cards when a shopper asks for a supported category in chat.
 - [x] Add typed tests for category detection, live product-card data, and graceful empty/error states.
 - [x] Verify the updated chat locally and save a checkpoint after validation.
+
+- [x] Show verified routine Store Guide answers immediately in the chat without waiting for the serverless request.
+- [x] Keep category product cards loading live in the background after the instant category answer.
+- [ ] Validate fast client behavior and publish the final speed improvement.
