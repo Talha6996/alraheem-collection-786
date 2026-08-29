@@ -219,3 +219,7 @@
 - [x] Show verified routine Store Guide answers immediately in the chat without waiting for the serverless request.
 - [x] Keep category product cards loading live in the background after the instant category answer.
 - [x] Validate fast client behavior and publish the final speed improvement.
+
+- [x] Replace the misleading simulated activity wording with an honest visitor-activity presentation.
+- [x] Make the activity display visibly larger and bolder on responsive storefront layouts.
+- [x] Add regression coverage and verify the updated activity display before checkpointing.

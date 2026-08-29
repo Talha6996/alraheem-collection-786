@@ -1,18 +1,5 @@
-import { useEffect, useState } from "react";
 import { Eye } from "lucide-react";
 
-function nextViewerCount(current: number) {
-  const change = Math.floor(Math.random() * 9) - 4;
-  return Math.min(47, Math.max(3, current + (change || 1)));
-}
-
-export function SimulatedViewerCount({ seed }: { seed: string }) {
-  const [count, setCount] = useState(() => 8 + Array.from(seed).reduce((total, character) => total + character.charCodeAt(0), 0) % 27);
-
-  useEffect(() => {
-    const interval = window.setInterval(() => setCount(current => nextViewerCount(current)), 1000);
-    return () => window.clearInterval(interval);
-  }, []);
-
-  return <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#f2ede4] px-3 py-2 text-[10px] font-bold uppercase tracking-[.09em] text-[#58708a]" title="Simulated activity indicator — it does not report real visitor traffic."><Eye size={14} className="text-[#bb492d]" aria-hidden="true" /><span><b className="tabular-nums text-[#123f72]">{count}</b> activity preview</span><span className="normal-case tracking-normal text-slate-500">(simulated)</span></p>;
+export function SimulatedViewerCount({ seed: _seed }: { seed: string }) {
+  return <p className="mt-5 inline-flex items-center gap-3 rounded-full bg-[#f2ede4] px-4 py-3 text-xs font-extrabold uppercase tracking-[.12em] text-[#58708a] shadow-sm md:px-5 md:py-3.5 md:text-sm" title="Store activity indicator"><Eye size={20} className="text-[#bb492d] md:h-[22px] md:w-[22px]" aria-hidden="true" /><span className="text-lg font-black leading-none text-[#123f72] md:text-xl">Activity</span><span className="hidden text-xs font-bold normal-case tracking-normal text-slate-600 sm:inline">Explore this piece</span></p>;
 }
