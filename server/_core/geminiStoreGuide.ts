@@ -37,7 +37,7 @@ function getGeminiAnswer(data: GeminiInteractionResponse) {
     .trim();
 }
 
-function getStoreGuideFallback(message: string) {
+function getStoreGuideInstantAnswer(message: string) {
   const question = message.toLowerCase().replace(/\s+/g, " ").trim();
   if (/\b(hi|hello|hey|salam|assalam|good morning|good evening)\b/.test(question)) {
     return "Welcome to ALRAHEEM COLLECTION 786. I can help you find a category, understand delivery, check the Sale or New Arrivals area, or guide you through WhatsApp ordering. What would you like to explore?";
@@ -69,7 +69,11 @@ function getStoreGuideFallback(message: string) {
   if (/refund|return|exchange|complaint|problem|issue/.test(question)) {
     return "Please contact our team on WhatsApp at +92 336 1243334 with your order details so they can review your request and confirm the applicable assistance.";
   }
-  return "I want to help with your shopping question. Please mention the product or category, your delivery city, or whether you need help with ordering, payment, tracking, or an account, and I’ll guide you to the right next step.";
+  return undefined;
+}
+
+function getStoreGuideFallback(message: string) {
+  return getStoreGuideInstantAnswer(message) ?? "I want to help with your shopping question. Please mention the product or category, your delivery city, or whether you need help with ordering, payment, tracking, or an account, and I’ll guide you to the right next step.";
 }
 
 function getGeminiKey() {
@@ -79,13 +83,19 @@ function getGeminiKey() {
 }
 
 export async function askGeminiStoreGuide(message: string, history: GuideMessage[]) {
+  const instantAnswer = getStoreGuideInstantAnswer(message);
+  if (instantAnswer) return instantAnswer;
+
   const turns = history.map(item => `${item.role === "assistant" ? "Guide" : "Shopper"}: ${item.content}`).join("\n");
   const input = `${STORE_GUIDE_INSTRUCTION}\n\nConversation history:\n${turns || "(No previous messages)"}\n\nLatest shopper question:\n${message}\n\nProfessional guide answer:`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 2800);
   try {
     const response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": getGeminiKey() },
       body: JSON.stringify({ model: GEMINI_STORE_GUIDE_MODEL, input }),
+      signal: controller.signal,
     });
     if (!response.ok) {
       console.warn(`Gemini store guide request fell back after status ${response.status}.`);
@@ -96,7 +106,9 @@ export async function askGeminiStoreGuide(message: string, history: GuideMessage
     if (!answer) return getStoreGuideFallback(message);
     return answer.slice(0, 1800);
   } catch {
-    console.warn("Gemini store guide request fell back after a transport error.");
+    console.warn("Gemini store guide request fell back after a transport error or timeout.");
     return getStoreGuideFallback(message);
+  } finally {
+    clearTimeout(timeout);
   }
 }

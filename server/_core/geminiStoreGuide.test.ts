@@ -12,7 +12,7 @@ describe("Gemini storefront guide", () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ output_text: "Delivery is PKR 250." }) });
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(askGeminiStoreGuide("How much is delivery?", [])).resolves.toBe("Delivery is PKR 250.");
+    await expect(askGeminiStoreGuide("What is your design philosophy?", [])).resolves.toBe("Delivery is PKR 250.");
     expect(fetchMock).toHaveBeenCalledWith("https://generativelanguage.googleapis.com/v1beta/interactions", expect.objectContaining({ headers: expect.objectContaining({ "x-goog-api-key": "server-only-key" }) }));
     const requestOptions = fetchMock.mock.calls[0]?.[1] as RequestInit;
     expect(String(requestOptions.body)).not.toContain("server-only-key");
@@ -24,14 +24,24 @@ describe("Gemini storefront guide", () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ output_text: "For Lahore, delivery is estimated at 2–4 working days." }) });
     vi.stubGlobal("fetch", fetchMock);
 
-    await askGeminiStoreGuide("How long will it take?", [{ role: "user", content: "I am ordering a ladies suit." }]);
+    await askGeminiStoreGuide("How should I choose?", [{ role: "user", content: "I am deciding between two options." }]);
 
     const requestOptions = fetchMock.mock.calls[0]?.[1] as RequestInit;
     const body = JSON.parse(String(requestOptions.body));
     expect(body.input).toContain("Answer the shopper's latest question directly and specifically");
-    expect(body.input).toContain("I am ordering a ladies suit.");
+    expect(body.input).toContain("I am deciding between two options.");
     expect(body.input).toContain("2–4 working days");
     expect(body.input).toContain("Never invent a price, discount, stock quantity");
+  });
+
+  it("answers verified routine questions instantly without calling the provider", async () => {
+    vi.stubEnv("GEMINI_API_KEY", "server-only-key");
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(askGeminiStoreGuide("How much is delivery?", [])).resolves.toContain("PKR 250");
+    await expect(askGeminiStoreGuide("Can I order on WhatsApp?", [])).resolves.toContain("+92 336 1243334");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("returns a helpful greeting when the provider is temporarily unavailable", async () => {
@@ -75,6 +85,6 @@ describe("Gemini storefront guide", () => {
       json: async () => ({ steps: [{ type: "thought" }, { type: "model_output", content: [{ type: "text", text: "Hello from the store guide." }] }] }),
     }));
 
-    await expect(askGeminiStoreGuide("hi", [])).resolves.toBe("Hello from the store guide.");
+    await expect(askGeminiStoreGuide("Describe the mood of the brand.", [])).resolves.toBe("Hello from the store guide.");
   });
 });

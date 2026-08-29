@@ -206,3 +206,7 @@
 - [x] Upgrade the Store Guide prompt and response logic so customer questions receive professional, intent-specific answers grounded in verified store information.
 - [x] Add regression tests for greetings, delivery, payment, ordering, categories, product questions, unsupported requests, and provider failures.
 - [x] Verify the upgraded Store Guide locally and on the live Netlify storefront.
+
+- [x] Add instant verified answers for common Store Guide questions so routine requests do not wait for Gemini.
+- [x] Add a bounded AI timeout and responsive fallback so slow provider requests cannot leave shoppers waiting indefinitely.
+- [ ] Test and live-verify rapid Store Guide responses without weakening accuracy or server-only key protection.
