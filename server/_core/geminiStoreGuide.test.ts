@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { askGeminiStoreGuide } from "./geminiStoreGuide";
+import { askGeminiStoreGuide, findGuideCategory } from "./geminiStoreGuide";
 
 describe("Gemini storefront guide", () => {
   afterEach(() => {
@@ -75,6 +75,13 @@ describe("Gemini storefront guide", () => {
     const answer = await askGeminiStoreGuide("Is the blue bridal set in stock and what size is it?", []);
     expect(answer).toContain("product page");
     expect(answer).toContain("WhatsApp");
+  });
+
+  it("maps natural category requests to verified collection handles", () => {
+    expect(findGuideCategory("Show me some pretty jewellery")).toMatchObject({ name: "JEWELLERY", collectionHandle: "jewellery" });
+    expect(findGuideCategory("Do you have party wear?")).toMatchObject({ name: "PARTY SET", collectionHandle: "party-set" });
+    expect(findGuideCategory("I need a ladies suit")).toMatchObject({ name: "LADIES SUIT", collectionHandle: "ladies-suit" });
+    expect(findGuideCategory("What payment methods do you accept?")).toBeUndefined();
   });
 
   it("reads text from Gemini's current interaction steps response", async () => {

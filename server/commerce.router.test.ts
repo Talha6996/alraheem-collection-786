@@ -112,6 +112,29 @@ describe("commerce.products", () => {
   });
 });
 
+describe("guide.ask", () => {
+  it("returns live products and collection metadata for a category request", async () => {
+    ok({ collection: { products: { edges: [{ node: rawProduct }] } } });
+
+    const caller = appRouter.createCaller(makeCtx());
+    const response = await caller.guide.ask({ message: "Show me jewellery", history: [] });
+
+    expect(response.category).toMatchObject({ name: "JEWELLERY", collectionHandle: "jewellery", href: "/shop?category=jewellery" });
+    expect(response.products).toHaveLength(1);
+    expect(response.products?.[0]).toMatchObject({ handle: "aria", title: "Aria" });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps non-category answers lightweight without a product lookup", async () => {
+    const caller = appRouter.createCaller(makeCtx());
+    const response = await caller.guide.ask({ message: "How much is delivery?", history: [] });
+
+    expect(response.answer).toContain("PKR 250");
+    expect(response).not.toHaveProperty("products");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
 describe("commerce.cart", () => {
   it("creates a cart, normalizes lines, and appends channel=online_store to the checkout URL", async () => {
     ok({

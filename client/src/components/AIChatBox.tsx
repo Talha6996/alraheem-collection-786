@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ProductPrice } from "@/components/ProductPrice";
+import type { Product } from "@shared/commerce/types";
+import { Link } from "wouter";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Loader2, Send, User, Sparkles } from "lucide-react";
@@ -12,6 +15,8 @@ import { Streamdown } from "streamdown";
 export type Message = {
   role: "system" | "user" | "assistant";
   content: string;
+  products?: Product[];
+  category?: { name: string; href: string };
 };
 
 export type AIChatBoxProps = {
@@ -263,6 +268,29 @@ export function AIChatBox({
                       {message.role === "assistant" ? (
                         <div className="prose prose-sm dark:prose-invert max-w-none">
                           <Streamdown>{message.content}</Streamdown>
+                          {message.category ? (
+                            <Link href={message.category.href} className="mt-2 inline-flex text-xs font-bold uppercase tracking-[0.08em] text-primary underline underline-offset-4">
+                              View all {message.category.name.toLowerCase()}
+                            </Link>
+                          ) : null}
+                          {message.products?.length ? (
+                            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                              {message.products.map(product => {
+                                const variant = product.variants[0];
+                                return (
+                                  <Link key={product.handle} href={`/product/${product.handle}`} className="group overflow-hidden rounded-md border border-border bg-background transition hover:-translate-y-0.5 hover:border-primary/50">
+                                    <img src={product.images[0]?.url ?? "/manus-storage/alraheem-accessories-flatlay_814b21f8.jpg"} alt={product.images[0]?.altText ?? product.title} loading="lazy" decoding="async" className="aspect-[4/5] w-full object-cover" />
+                                    <div className="space-y-1 p-2">
+                                      <p className="line-clamp-2 text-[11px] font-semibold leading-tight">{product.title}</p>
+                                      <ProductPrice price={variant?.price ?? product.priceRange.min} compareAtPrice={variant?.compareAtPrice} compact />
+                                    </div>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          ) : message.category ? (
+                            <p className="mt-2 text-xs text-muted-foreground">I couldn’t find live products in this collection right now. Please open the collection or message us on WhatsApp for help.</p>
+                          ) : null}
                         </div>
                       ) : (
                         <p className="whitespace-pre-wrap text-sm">

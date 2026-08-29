@@ -9,7 +9,7 @@ export function StoreGuide() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([STARTER]);
   const guide = trpc.guide.ask.useMutation({
-    onSuccess: ({ answer }) => setMessages(current => [...current, { role: "assistant", content: answer }]),
+    onSuccess: ({ answer, category, products }) => setMessages(current => [...current, { role: "assistant", content: answer, category, products }]),
     onError: () => setMessages(current => [...current, { role: "assistant", content: "I’m unable to answer that just now. Please message our team on WhatsApp for help." }]),
   });
 

@@ -19,6 +19,38 @@ Professional answer rules:
 7. If a request is outside store support, politely say what store-related help you can provide and offer the closest useful next step. Do not fabricate policies or facts.`;
 const GEMINI_STORE_GUIDE_MODEL = "gemini-3.6-flash";
 
+export type GuideCategory = {
+  name: string;
+  collectionHandle: string;
+  href: string;
+};
+
+const GUIDE_CATEGORIES: readonly GuideCategory[] = [
+  { name: "JEWELLERY", collectionHandle: "jewellery", href: "/shop?category=jewellery" },
+  { name: "HANDBAGS", collectionHandle: "handbags", href: "/shop?category=handbags" },
+  { name: "LADIES SUIT", collectionHandle: "ladies-suit", href: "/shop?category=ladies-suit" },
+  { name: "MENS SUIT", collectionHandle: "mens-suit", href: "/shop?category=mens-suit" },
+  { name: "BRANDED KARA", collectionHandle: "branded-kara", href: "/shop?category=branded-kara" },
+  { name: "BRIDAL SETS", collectionHandle: "bridal-sets", href: "/shop?category=bridal-sets" },
+  { name: "MENS BRACELET", collectionHandle: "mens-bracelet", href: "/shop?category=mens-bracelet" },
+  { name: "PARTY SET", collectionHandle: "party-set", href: "/shop?category=party-set" },
+];
+
+export function findGuideCategory(message: string): GuideCategory | undefined {
+  const question = message.toLowerCase().replace(/\s+/g, " ").trim();
+  const aliases: Array<[RegExp, GuideCategory]> = [
+    [/\b(jewellery|jewelry|jewels|ornaments?)\b/, GUIDE_CATEGORIES[0]],
+    [/\b(handbags?|purses?|bags?)\b/, GUIDE_CATEGORIES[1]],
+    [/\b(ladies'?\s+suits?|women'?s?\s+suits?|womens?\s+clothes?)\b/, GUIDE_CATEGORIES[2]],
+    [/\b(men'?s?\s+suits?|mens?\s+clothes?)\b/, GUIDE_CATEGORIES[3]],
+    [/\b(branded\s+kara|kara)\b/, GUIDE_CATEGORIES[4]],
+    [/\b(bridal|bride|bridal\s+sets?)\b/, GUIDE_CATEGORIES[5]],
+    [/\b(men'?s?\s+bracelets?|mens?\s+bracelets?)\b/, GUIDE_CATEGORIES[6]],
+    [/\b(party\s+sets?|party\s+wear)\b/, GUIDE_CATEGORIES[7]],
+  ];
+  return aliases.find(([pattern]) => pattern.test(question))?.[1];
+}
+
 type GeminiInteractionResponse = {
   output_text?: string;
   steps?: Array<{ type?: string; content?: Array<{ type?: string; text?: string }> }>;
@@ -68,6 +100,9 @@ function getStoreGuideInstantAnswer(message: string) {
   }
   if (/refund|return|exchange|complaint|problem|issue/.test(question)) {
     return "Please contact our team on WhatsApp at +92 336 1243334 with your order details so they can review your request and confirm the applicable assistance.";
+  }
+  if (/what do you sell|what do you have|what do you offer|what kind of (items|products)|tell me about (the )?store|what is your store about/.test(question)) {
+    return "ALRAHEEM COLLECTION 786 offers Jewellery, Handbags, Ladies Suit, Mens Suit, Branded Kara, Bridal Sets, Mens Bracelet, and Party Set collections. Tell me which category or occasion you are shopping for, and I’ll guide you to the most relevant products.";
   }
   return undefined;
 }
