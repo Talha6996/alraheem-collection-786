@@ -307,6 +307,7 @@ const CART_FRAGMENT = /* GraphQL */ `
 // ---------------------------------------------------------------------------
 
 type Edges<T> = { edges: Array<{ node: T }> };
+type ProductConnection = Edges<RawProduct> & { pageInfo?: { hasNextPage: boolean; endCursor: string | null } };
 
 export type ListProductsOptions = {
   first?: number;
@@ -314,9 +315,12 @@ export type ListProductsOptions = {
   collectionHandle?: string;
   /** Request newest Shopify products first for the New Arrivals page. */
   sort?: "NEWEST" | "TITLE";
+  /** Fetch every page instead of limiting the result to `first` items. */
+  all?: boolean;
 };
 
-const CATALOG_CACHE_TTL_MS = 60_000;
+const CATALOG_CACHE_TTL_MS = 10_000;
+const SHOPIFY_PAGE_SIZE = 250;
 const productListCache = new Map<string, { expiresAt: number; products: Product[] }>();
 
 function getCachedProductList(key: string): Product[] | null {
@@ -342,41 +346,49 @@ export function clearProductListCache(): void {
 export async function listProducts(
   options: ListProductsOptions = {}
 ): Promise<Product[]> {
-  const first = options.first ?? 24;
-  const cacheKey = `${options.collectionHandle ?? "all"}:${options.sort ?? "TITLE"}:${first}`;
+  const requestedFirst = options.all ? undefined : options.first;
+  const cacheKey = `${options.collectionHandle ?? "all"}:${options.sort ?? "TITLE"}:${options.all ? "all" : requestedFirst ?? 24}`;
   const cached = getCachedProductList(cacheKey);
   if (cached) return cached;
 
-  if (options.collectionHandle) {
-    const data = await storefrontFetch<{
-      collection: { products: Edges<RawProduct> } | null;
-    }>(
-      `${PRODUCT_CARD_FRAGMENT}
-       query productsByCollection($handle: String!, $first: Int!) {
-         collection(handle: $handle) {
-           products(first: $first) {
-             edges { node { ...ProductCardFields } }
-           }
-         }
-       }`,
-      { handle: options.collectionHandle, first }
-    );
-    if (!data.collection) return cacheProductList(cacheKey, []);
-    return cacheProductList(cacheKey, data.collection.products.edges.map(e => normalizeProduct(e.node)));
-  }
-
   const sortKey = options.sort === "NEWEST" ? "CREATED_AT" : "TITLE";
   const reverse = options.sort === "NEWEST" ? ", reverse: true" : "";
-  const data = await storefrontFetch<{ products: Edges<RawProduct> }>(
-    `${PRODUCT_CARD_FRAGMENT}
-     query listProducts($first: Int!) {
-       products(first: $first, sortKey: ${sortKey}${reverse}) {
-         edges { node { ...ProductCardFields } }
-       }
-     }`,
-    { first }
-  );
-  return cacheProductList(cacheKey, data.products.edges.map(e => normalizeProduct(e.node)));
+  const queryName = options.collectionHandle ? "productsByCollection" : "listProducts";
+  const query = options.collectionHandle
+    ? `${PRODUCT_CARD_FRAGMENT}
+       query ${queryName}($handle: String!, $first: Int!, $after: String) {
+         collection(handle: $handle) {
+           products(first: $first, after: $after, sortKey: ${sortKey}${reverse}) {
+             edges { node { ...ProductCardFields } }
+             pageInfo { hasNextPage endCursor }
+           }
+         }
+       }`
+    : `${PRODUCT_CARD_FRAGMENT}
+       query ${queryName}($first: Int!, $after: String) {
+         products(first: $first, after: $after, sortKey: ${sortKey}${reverse}) {
+           edges { node { ...ProductCardFields } }
+           pageInfo { hasNextPage endCursor }
+         }
+       }`;
+
+  const products: Product[] = [];
+  const pageSize = options.all ? SHOPIFY_PAGE_SIZE : Math.min(requestedFirst ?? 24, SHOPIFY_PAGE_SIZE);
+  let after: string | null = null;
+  let hasNextPage = true;
+  while (hasNextPage && (options.all || products.length < (requestedFirst ?? 24))) {
+    const data: { collection?: { products: ProductConnection } | null; products?: ProductConnection } = await storefrontFetch<{ collection?: { products: ProductConnection } | null; products?: ProductConnection }>(
+      query,
+      options.collectionHandle ? { handle: options.collectionHandle, first: pageSize, after } : { first: pageSize, after }
+    );
+    const connection: ProductConnection | undefined = options.collectionHandle ? data.collection?.products : data.products;
+    if (!connection) break;
+    products.push(...connection.edges.map(e => normalizeProduct(e.node)));
+    hasNextPage = Boolean(connection.pageInfo?.hasNextPage);
+    after = connection.pageInfo?.endCursor ?? null;
+  }
+
+  return cacheProductList(cacheKey, requestedFirst ? products.slice(0, requestedFirst) : products);
 }
 
 export async function getProductByHandle(handle: string): Promise<Product> {

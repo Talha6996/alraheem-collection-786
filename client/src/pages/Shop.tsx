@@ -12,7 +12,7 @@ function queryValue(key: string) {
 export default function Shop() {
   const [activeCategory, setActiveCategory] = useState<string>(() => findStoreCategory(queryValue("category"))?.collectionHandle ?? "");
   const activeStoreCategory = useMemo(() => STORE_CATEGORIES.find(category => category.collectionHandle === activeCategory), [activeCategory]);
-  const catalogueInput = useMemo(() => activeStoreCategory ? { first: 24, collectionHandle: activeStoreCategory.collectionHandle } : { first: 24 }, [activeStoreCategory]);
+  const catalogueInput = useMemo(() => activeStoreCategory ? { all: true, collectionHandle: activeStoreCategory.collectionHandle } : { all: true }, [activeStoreCategory]);
   const { data: products = [], isLoading } = useCatalogueProducts(catalogueInput);
   const query = queryValue("q").toLowerCase();
   const activeTag = queryValue("tag");

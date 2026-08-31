@@ -223,3 +223,8 @@
 - [x] Replace the misleading simulated activity wording with an honest visitor-activity presentation.
 - [x] Make the activity display visibly larger and bolder on responsive storefront layouts.
 - [x] Add regression coverage and verify the updated activity display before checkpointing.
+
+- [x] Remove any artificial 24-product category limit and support complete Shopify pagination.
+- [x] Improve catalogue synchronization freshness and avoid unnecessary repeated Shopify requests.
+- [x] Add tests proving products beyond the first 24 are retained and category results stay complete.
+- [ ] Verify the live Shopify catalogue beyond 24 products and save the update.
