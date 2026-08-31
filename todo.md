@@ -227,4 +227,7 @@
 - [x] Remove any artificial 24-product category limit and support complete Shopify pagination.
 - [x] Improve catalogue synchronization freshness and avoid unnecessary repeated Shopify requests.
 - [x] Add tests proving products beyond the first 24 are retained and category results stay complete.
-- [ ] Verify the live Shopify catalogue beyond 24 products and save the update.
+- [x] Verify the live Shopify catalogue beyond 24 products and save the update.
+
+- [x] Diagnose why the published Netlify storefront still returns only 24 Shopify products after publishing.
+- [x] Confirm the live storefront shows products beyond 24 and new Shopify catalogue updates promptly.
