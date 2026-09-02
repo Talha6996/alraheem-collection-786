@@ -343,6 +343,17 @@ export function clearProductListCache(): void {
   productListCache.clear();
 }
 
+/**
+ * Warm the complete catalogue for a silent scheduled refresh. This intentionally
+ * avoids any customer-facing notification; normal requests still use the same
+ * short cache window and live Shopify pagination.
+ */
+export async function refreshProductListCache(): Promise<number> {
+  clearProductListCache();
+  const products = await listProducts({ all: true });
+  return products.length;
+}
+
 export async function listProducts(
   options: ListProductsOptions = {}
 ): Promise<Product[]> {

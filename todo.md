@@ -231,3 +231,7 @@
 
 - [x] Diagnose why the published Netlify storefront still returns only 24 Shopify products after publishing.
 - [x] Confirm the live storefront shows products beyond 24 and new Shopify catalogue updates promptly.
+
+- [x] Add silent Shopify catalogue refresh using a supported background mechanism; do not use an in-process 25-second timer.
+- [x] Respect the platform’s minimum scheduled interval and prevent unnecessary Shopify requests with safe cache revalidation.
+- [ ] Add tests and verify the deployed catalogue refresh behavior without shopper notifications.

@@ -4,6 +4,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
+import { handleShopifyCatalogueRefresh } from "../scheduled/shopifyCatalogueRefresh";
 
 function addBodyParsers(app: express.Express) {
   app.use(express.json({ limit: "50mb" }));
@@ -16,6 +17,7 @@ export function createManagedRuntimeApp() {
   addBodyParsers(app);
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+  app.post("/api/scheduled/shopify-catalogue-refresh", handleShopifyCatalogueRefresh);
   app.use(
     "/api/trpc",
     createExpressMiddleware({
