@@ -234,4 +234,7 @@
 
 - [x] Add silent Shopify catalogue refresh using a supported background mechanism; do not use an in-process 25-second timer.
 - [x] Respect the platform’s minimum scheduled interval and prevent unnecessary Shopify requests with safe cache revalidation.
-- [ ] Add tests and verify the deployed catalogue refresh behavior without shopper notifications.
+- [x] Add tests and verify the deployed catalogue refresh behavior without shopper notifications.
+
+- [x] Reset scroll position to the top when navigating to a category or product page on mobile.
+- [x] Add regression coverage for route changes from a scrolled position and verify responsive navigation behavior.

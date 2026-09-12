@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import StoreShell from "./components/StoreShell";
 import Home from "./pages/Home";
+import { enableManualScrollRestoration, resetScrollPosition } from "./lib/scrollRestoration";
 
 // The landing route stays eager for the quickest first view. Every secondary
 // page is downloaded only when a shopper navigates to it.
@@ -35,6 +36,16 @@ function IdleToaster() {
 }
 
 function Router() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    return enableManualScrollRestoration(window);
+  }, []);
+
+  useEffect(() => {
+    resetScrollPosition(window);
+  }, [location]);
+
   // make sure to consider if you need authentication for certain routes
   return (
     <Suspense fallback={<div className="min-h-72 bg-[#fffdf9]" aria-busy="true" aria-label="Loading page" />}>
