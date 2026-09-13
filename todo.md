@@ -238,3 +238,7 @@
 
 - [x] Reset scroll position to the top when navigating to a category or product page on mobile.
 - [x] Add regression coverage for route changes from a scrolled position and verify responsive navigation behavior.
+
+- [x] Discover the three newly added Shopify collections through the live Storefront API.
+- [x] Show newly discovered collections in the Netlify storefront without hardcoding stale category limits.
+- [ ] Verify all three new collection pages and save the update.

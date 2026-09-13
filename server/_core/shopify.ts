@@ -419,7 +419,7 @@ export async function getProductByHandle(handle: string): Promise<Product> {
   return normalizeProduct(data.productByHandle);
 }
 
-export async function listCollections(first: number = 10): Promise<Collection[]> {
+export async function listCollections(first: number = 50): Promise<Collection[]> {
   const data = await storefrontFetch<{ collections: Edges<RawCollection> }>(
     `${COLLECTION_FRAGMENT}
      query listCollections($first: Int!) {
