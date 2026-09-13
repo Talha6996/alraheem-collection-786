@@ -241,4 +241,4 @@
 
 - [x] Discover the three newly added Shopify collections through the live Storefront API.
 - [x] Show newly discovered collections in the Netlify storefront without hardcoding stale category limits.
-- [ ] Verify all three new collection pages and save the update.
+- [x] Verify all three new collection pages and save the update.
