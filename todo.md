@@ -242,3 +242,7 @@
 - [x] Discover the three newly added Shopify collections through the live Storefront API.
 - [x] Show newly discovered collections in the Netlify storefront without hardcoding stale category limits.
 - [x] Verify all three new collection pages and save the update.
+
+- [x] Show all live Shopify collections, including the three new collections, in the homepage collection section.
+- [x] Confirm the silent one-minute Shopify category refresh remains enabled and does not notify shoppers.
+- [x] Verify homepage collection links and save the update.
