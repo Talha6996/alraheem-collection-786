@@ -37,7 +37,7 @@ export default function Home() {
           productType: collection.handle,
           collectionHandle: collection.handle,
           href: `/shop?category=${encodeURIComponent(collection.handle)}`,
-          image: STORE_CATEGORIES[0]?.image ?? "",
+          image: collection.image?.url ?? STORE_CATEGORIES[0]?.image ?? "",
           sourceFile: "shopify",
           position: "dynamic",
         });

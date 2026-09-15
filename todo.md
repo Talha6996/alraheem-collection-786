@@ -246,3 +246,7 @@
 - [x] Show all live Shopify collections, including the three new collections, in the homepage collection section.
 - [x] Confirm the silent one-minute Shopify category refresh remains enabled and does not notify shoppers.
 - [x] Verify homepage collection links and save the update.
+
+- [x] Sync Shopify collection images for newly discovered homepage collections instead of using the old fallback image.
+- [x] Verify the three new collection cards use their Shopify images and preserve silent one-minute refresh behavior.
+- [x] Save the image-sync update after fast validation.
