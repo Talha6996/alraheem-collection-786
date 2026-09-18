@@ -9,7 +9,7 @@ import { trpc } from "@/lib/trpc";
 
 const assets = {
   logo: storefrontAsset("/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png"),
-  hero: storefrontAsset("/manus-storage/alraheem-hero-user-replacement_4761f1e6.png"),
+  hero: storefrontAsset("/manus-storage/pasted_file_XOyciP_WhatsAppImage2026-09-18at13.31.19_3f6a09aa.jpeg"),
 };
 
 const jewellerySubcategoryNames = new Set([
