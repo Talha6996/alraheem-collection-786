@@ -12,6 +12,16 @@ const assets = {
   hero: storefrontAsset("/manus-storage/alraheem-hero-user-replacement_4761f1e6.png"),
 };
 
+const jewellerySubcategoryNames = new Set([
+  "party set", "1 carat bangles", "bangles", "gold plated bangles",
+  "1 carat earrings", "brand earrings", "jewllery sets", "jewellery sets",
+  "1 carat jewellery sets", "ladies watches",
+]);
+
+function isJewellerySubcategory(category: { name: string; productType: string }) {
+  return jewellerySubcategoryNames.has(category.name.trim().toLowerCase()) || jewellerySubcategoryNames.has(category.productType.trim().toLowerCase());
+}
+
 export default function Home() {
   const [loadPromotions, setLoadPromotions] = useState(false);
   useEffect(() => {
@@ -29,7 +39,7 @@ export default function Home() {
         sourceFile: "shopify", position: "dynamic",
       });
     }
-    return Array.from(known.values());
+    return Array.from(known.values()).filter(category => category.collectionHandle === "jewellery" || !isJewellerySubcategory(category));
   }, [liveCollections]);
   return <><section className="hero-section"><div className="hero-copy"><p className="eyebrow"><span />ALRAHEEM COLLECTION 786</p><h1>Pieces<br />with<br /><i>presence.</i></h1><p>From jewellery and handbags to considered suits and bridal sets, discover pieces selected for meaningful moments.</p><div className="hero-buttons"><Link href="/shop" className="button-primary">Shop the collection <ArrowRight size={15} /></Link><Link href="/jewellery" className="text-button">Explore jewellery <ArrowRight size={15} /></Link></div><div className="hero-caption"><span>01</span> Jewellery, signature accessories and occasion dressing</div></div><div className="hero-visual"><img src={assets.hero} alt="ALRAHEEM COLLECTION 786 fashion collection" fetchPriority="high" decoding="async" /><div className="hero-logo-plaque"><img src={assets.logo} alt="ALRAHEEM COLLECTION 786 official logo" decoding="async" /></div><div className="hero-image-caption">Celebrating colour &amp; craft</div></div></section><HomePromoBanner products={products} loading={!loadPromotions || isLoading} /><section className="category-section container"><div className="section-intro"><div><p className="eyebrow"><span />Browse the collection</p><h2>Find your <i>piece.</i></h2></div><p>Every live collection, each presented with a distinct point of view.</p></div><div className="category-grid category-grid--seven">{homepageCategories.map((category, index) => category.collectionHandle === "jewellery" ? <Link key={category.productType} href="/jewellery" className="category-card"><img src={category.image} className={category.position} alt={category.name} loading="lazy" decoding="async" /><div className="category-card-overlay" /><div><small>{String(index + 1).padStart(2, "0")} / Collection</small><b>{category.name}</b><em>Choose a collection <ArrowRight size={13} /></em></div></Link> : <Link key={category.productType} href={category.href} className="category-card"><img src={category.image} className={category.position} alt={category.name} loading="lazy" decoding="async" /><div className="category-card-overlay" /><div><small>{String(index + 1).padStart(2, "0")} / Collection</small><b>{category.name}</b><em>Explore <ArrowRight size={13} /></em></div></Link>)}</div></section><section className="editorial-band"><div className="container editorial-band-inner"><div className="editorial-band-copy"><p className="eyebrow"><span />Bridal sets</p><h2>For the moment<br /><i>you will remember.</i></h2><p>Explore pieces selected for celebrations, milestones and meaningful gifting.</p><Link href="/shop?category=Bridal+Sets" className="button-light">Explore bridal sets <ArrowRight size={14} /></Link></div><div className="editorial-band-image gift-composition"><div className="gift-card gift-card--one" /><div className="gift-card gift-card--two" /></div></div></section></>;
 }
