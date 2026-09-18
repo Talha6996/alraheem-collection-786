@@ -10,6 +10,18 @@ vi.mock("@/components/HomePromoBanner", () => ({
   default: () => null,
 }));
 
+vi.mock("@/lib/trpc", () => ({
+  trpc: {
+    commerce: {
+      collections: {
+        list: {
+          useQuery: () => ({ data: [] }),
+        },
+      },
+    },
+  },
+}));
+
 vi.mock("wouter", async () => {
   const React = await import("react");
 
