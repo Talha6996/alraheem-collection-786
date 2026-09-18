@@ -6,7 +6,7 @@ import { STORE_CATEGORIES } from "@/lib/storeCategories";
 const jewellerySubcategoryNames = new Set([
   "party set", "1 carat bangles", "bangles", "gold plated bangles",
   "1 carat earrings", "brand earrings", "jewllery sets", "jewellery sets",
-  "1 carat jewellery sets", "ladies watches",
+  "1 carat jewellery sets", "ladies watches", "bridal sets", "branded kara",
 ]);
 
 function isJewellerySubcategory(category: { name: string; productType: string }) {
