@@ -11,6 +11,7 @@ import { enableManualScrollRestoration, resetScrollPosition } from "./lib/scroll
 const Bag = lazy(() => import("./pages/Bag"));
 const Account = lazy(() => import("./pages/Account"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Jewellery = lazy(() => import("./pages/Jewellery"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const PromotionCatalogue = lazy(() => import("./pages/PromotionCatalogue"));
@@ -51,6 +52,7 @@ function Router() {
     <Suspense fallback={<div className="min-h-72 bg-[#fffdf9]" aria-busy="true" aria-label="Loading page" />}>
       <Switch>
         <Route path={"/"} component={Home} />
+        <Route path={"/jewellery"} component={Jewellery} />
         <Route path={"/shop"} component={Shop} />
         <Route path={"/product/:handle"} component={ProductDetail} />
         <Route path={"/new-arrivals"}>{() => <PromotionCatalogue kind="new" />}</Route>
