@@ -5,13 +5,13 @@ import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
  import { createCartOrderUrl, createStoreWhatsAppUrl, formatMoney, multiplyMoney } from "@/lib/commerce";
- import { storefrontAsset } from "@/lib/storeAssets";
+ import { STOREFRONT_LOGO } from "@/lib/storeAssets";
  import { STORE_CATEGORIES } from "@/lib/storeCategories";
  import { trpc } from "@/lib/trpc";
  import { StoreGuide } from "@/components/StoreGuide";
  import { ProductPrice } from "@/components/ProductPrice";
 
-const LOGO = storefrontAsset("/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png");
+const LOGO = STOREFRONT_LOGO;
 function CartDrawer() {
   const { cart, isOpen, closeCart, loading, updateQuantity, removeItem, proceedToCheckout } = useCart();
   if (!isOpen) return null;

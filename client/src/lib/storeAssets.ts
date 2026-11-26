@@ -1,5 +1,8 @@
 const MANUS_ASSET_PREFIX = "/manus-storage/";
 
+/** Public logo delivery URL used by the independent Netlify storefront. */
+export const STOREFRONT_LOGO = "https://res.cloudinary.com/olyxyinv/image/upload/v1787239168/alraheem-collection-786-exact-logo_6b12493a.png";
+
 function configuredAssetBase() {
   const value = import.meta.env.VITE_STOREFRONT_ASSET_BASE_URL?.trim();
   return value ? value.replace(/\/+$/, "") : null;

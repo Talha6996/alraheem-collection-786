@@ -3,12 +3,12 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import HomePromoBanner from "@/components/HomePromoBanner";
 import { useCatalogueProducts } from "@/hooks/useCatalogueProducts";
-import { storefrontAsset } from "@/lib/storeAssets";
+import { STOREFRONT_LOGO } from "@/lib/storeAssets";
 import { STORE_CATEGORIES } from "@/lib/storeCategories";
 import { trpc } from "@/lib/trpc";
 
 const assets = {
-  logo: storefrontAsset("/manus-storage/alraheem-collection-786-exact-logo_6b12493a.png"),
+  logo: STOREFRONT_LOGO,
   hero: "https://i.postimg.cc/8PnT2J4P/bli.jpg",
 };
 
