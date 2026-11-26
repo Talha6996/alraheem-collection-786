@@ -1,7 +1,11 @@
 const MANUS_ASSET_PREFIX = "/manus-storage/";
 
-/** Public logo delivery URL used by the independent Netlify storefront. */
-export const STOREFRONT_LOGO = "https://res.cloudinary.com/olyxyinv/image/upload/v1787239168/alraheem-collection-786-exact-logo_6b12493a.png";
+/**
+ * Netlify injects this at build time. The fallback keeps local preview usable
+ * until the same variable is configured in the hosting dashboard.
+ */
+const CLOUDINARY_LOGO_FALLBACK = "https://res.cloudinary.com/olyxyinv/image/upload/v1787239168/alraheem-collection-786-exact-logo_6b12493a.png";
+export const STOREFRONT_LOGO = import.meta.env.VITE_CLOUDINARY_LOGO_URL?.trim() || CLOUDINARY_LOGO_FALLBACK;
 
 function configuredAssetBase() {
   const value = import.meta.env.VITE_STOREFRONT_ASSET_BASE_URL?.trim();
