@@ -33,7 +33,15 @@ export default function Home() {
   const homepageCategories = useMemo(() => {
     const known = new Map(STORE_CATEGORIES.map(category => [category.collectionHandle, category]));
     for (const collection of liveCollections) {
-      if (!known.has(collection.handle)) known.set(collection.handle, {
+      const existing = known.get(collection.handle);
+      known.set(collection.handle, existing ? {
+        ...existing,
+        name: collection.title,
+        productType: collection.handle,
+        href: `/shop?category=${encodeURIComponent(collection.handle)}`,
+        image: collection.image?.url ?? existing.image,
+        sourceFile: collection.image ? "Shopify collection image" : existing.sourceFile,
+      } : {
         name: collection.title, productType: collection.handle, collectionHandle: collection.handle,
         href: `/shop?category=${encodeURIComponent(collection.handle)}`, image: collection.image?.url ?? STORE_CATEGORIES[0]?.image ?? "",
         sourceFile: "shopify", position: "dynamic",

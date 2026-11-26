@@ -112,6 +112,51 @@ describe("commerce.products", () => {
   });
 });
 
+describe("commerce.collections", () => {
+  it("paginates through all Shopify collections and keeps their images", async () => {
+    ok({
+      collections: {
+        edges: [{
+          node: {
+            id: "gid://shopify/Collection/1",
+            handle: "handbags",
+            title: "HANDBAGS",
+            description: "",
+            image: { url: "https://cdn.shopify.com/handbags.jpg", altText: "HANDBAGS", width: 1200, height: 1200 },
+          },
+        }],
+        pageInfo: { hasNextPage: true, endCursor: "cursor-1" },
+      },
+    });
+    ok({
+      collections: {
+        edges: [{
+          node: {
+            id: "gid://shopify/Collection/2",
+            handle: "new-category",
+            title: "NEW CATEGORY",
+            description: "",
+            image: { url: "https://cdn.shopify.com/new-category.jpg", altText: null, width: 1200, height: 1200 },
+          },
+        }],
+        pageInfo: { hasNextPage: false, endCursor: null },
+      },
+    });
+
+    const caller = appRouter.createCaller(makeCtx());
+    const collections = await caller.commerce.collections.list({ first: 50 });
+
+    expect(collections).toHaveLength(2);
+    expect(collections[0].image?.url).toBe("https://cdn.shopify.com/handbags.jpg");
+    expect(collections[1].handle).toBe("new-category");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(JSON.parse((fetchMock.mock.calls[1][1] as RequestInit).body as string).variables).toMatchObject({
+      first: 50,
+      after: "cursor-1",
+    });
+  });
+});
+
 describe("guide.ask", () => {
   it("returns category metadata immediately without blocking on Shopify", async () => {
     const caller = appRouter.createCaller(makeCtx());

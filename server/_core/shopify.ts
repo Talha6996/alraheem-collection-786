@@ -419,17 +419,33 @@ export async function getProductByHandle(handle: string): Promise<Product> {
   return normalizeProduct(data.productByHandle);
 }
 
+type CollectionConnection = Edges<RawCollection> & {
+  pageInfo?: { hasNextPage: boolean; endCursor: string | null };
+};
+
 export async function listCollections(first: number = 50): Promise<Collection[]> {
-  const data = await storefrontFetch<{ collections: Edges<RawCollection> }>(
-    `${COLLECTION_FRAGMENT}
-     query listCollections($first: Int!) {
-       collections(first: $first) {
-         edges { node { ...CollectionFields } }
-       }
-     }`,
-    { first }
-  );
-  return data.collections.edges.map(e => normalizeCollection(e.node));
+  const pageSize = Math.min(Math.max(first, 1), 250);
+  const collections: Collection[] = [];
+  let after: string | null = null;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const data: { collections: CollectionConnection } = await storefrontFetch<{ collections: CollectionConnection }>(
+      `${COLLECTION_FRAGMENT}
+       query listCollections($first: Int!, $after: String) {
+         collections(first: $first, after: $after) {
+           edges { node { ...CollectionFields } }
+           pageInfo { hasNextPage endCursor }
+         }
+       }`,
+      { first: pageSize, after },
+    );
+    collections.push(...data.collections.edges.map(e => normalizeCollection(e.node)));
+    hasNextPage = Boolean(data.collections.pageInfo?.hasNextPage);
+    after = data.collections.pageInfo?.endCursor ?? null;
+  }
+
+  return collections;
 }
 
 export async function getCollectionByHandle(handle: string): Promise<Collection> {

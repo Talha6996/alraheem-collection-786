@@ -16,7 +16,16 @@ export default function Shop() {
   const availableCategories = useMemo(() => {
     const known = new Map(STORE_CATEGORIES.map(category => [category.collectionHandle, { ...category, title: category.name }]));
     for (const collection of liveCollections) {
-      if (!known.has(collection.handle)) known.set(collection.handle, { name: collection.title, title: collection.title, collectionHandle: collection.handle, productType: collection.handle, href: `/shop?category=${encodeURIComponent(collection.handle)}`, image: STORE_CATEGORIES[0]?.image ?? "", sourceFile: "shopify", position: "dynamic" });
+      const existing = known.get(collection.handle);
+      known.set(collection.handle, existing ? {
+        ...existing,
+        name: collection.title,
+        title: collection.title,
+        productType: collection.handle,
+        href: `/shop?category=${encodeURIComponent(collection.handle)}`,
+        image: collection.image?.url ?? existing.image,
+        sourceFile: collection.image ? "Shopify collection image" : existing.sourceFile,
+      } : { name: collection.title, title: collection.title, collectionHandle: collection.handle, productType: collection.handle, href: `/shop?category=${encodeURIComponent(collection.handle)}`, image: collection.image?.url ?? STORE_CATEGORIES[0]?.image ?? "", sourceFile: "shopify", position: "dynamic" });
     }
     return Array.from(known.values());
   }, [liveCollections]);
