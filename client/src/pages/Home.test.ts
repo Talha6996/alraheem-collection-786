@@ -31,15 +31,19 @@ vi.mock("wouter", async () => {
   };
 });
 
-import Home from "./Home";
+import Home, { isJewellerySubcategory } from "./Home";
 
 describe("Home", () => {
+  it("keeps 1 CARAT JEWELLERY SETS inside the Jewellery chooser", () => {
+    expect(isJewellerySubcategory({ name: "1 CARAT JEWELLERY SETS", productType: "1-carat-jewellery-sets" })).toBe(true);
+  });
+
   it("uses the user-supplied hero image while retaining category and editorial paths", () => {
     const markup = renderToStaticMarkup(createElement(Home));
 
     expect(markup).not.toContain("Current");
     expect(markup).not.toContain("favourites");
-    expect(markup).toContain("/manus-storage/alraheem-hero-user-replacement_4761f1e6.png");
+    expect(markup).toContain("https://i.postimg.cc/8PnT2J4P/bli.jpg");
     expect(markup).toContain('alt="ALRAHEEM COLLECTION 786 fashion collection"');
     expect(markup).toContain("Find your");
     expect(markup).toContain("For the moment");
