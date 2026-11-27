@@ -3,6 +3,11 @@ import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { STORE_CATEGORIES } from "@/lib/storeCategories";
 
+const liveImageFallbacks: Record<string, string> = {
+  "branded-kara": "https://cdn.shopify.com/s/files/1/0836/8357/3974/files/rn-image_picker_lib_temp_67b13676-a6ce-48c1-91ef-2fd5b99dd307.jpg?v=1787141144",
+  "bridal-sets": "/manus-storage/pasted_file_vaepvz_image_52f224f9.png",
+};
+
 const jewellerySubcategoryNames = new Set([
   "party set", "1 carat bangles", "bangles", "gold plated bangles",
   "1 carat earrings", "brand earrings", "jewllery sets", "jewellery sets",
@@ -20,12 +25,19 @@ export default function Jewellery() {
   );
   const known = new Map(STORE_CATEGORIES.map(category => [category.collectionHandle, category]));
   for (const collection of liveCollections) {
-    if (!known.has(collection.handle)) known.set(collection.handle, {
+    const existing = known.get(collection.handle);
+    known.set(collection.handle, existing ? {
+      ...existing,
+      name: collection.title,
+      productType: collection.handle,
+      image: collection.image?.url ?? liveImageFallbacks[collection.handle] ?? existing.image,
+      sourceFile: collection.image ? "Shopify collection image" : existing.sourceFile,
+    } : {
       name: collection.title,
       productType: collection.handle,
       collectionHandle: collection.handle,
       href: `/shop?category=${encodeURIComponent(collection.handle)}`,
-      image: collection.image?.url ?? STORE_CATEGORIES[0]?.image ?? "",
+      image: collection.image?.url ?? liveImageFallbacks[collection.handle] ?? STORE_CATEGORIES[0]?.image ?? "",
       sourceFile: "shopify",
       position: "dynamic",
     });
