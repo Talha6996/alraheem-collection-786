@@ -15,7 +15,7 @@ const assets = {
 const jewellerySubcategoryNames = new Set([
   "party set", "1 carat bangles", "bangles", "gold plated bangles",
   "1 carat earrings", "brand earrings", "jewllery sets", "jewellery sets",
-  "1 carat jewellery sets", "ladies watches", "bridal sets", "branded kara",
+  "1 carat jewellery sets", "1 carat jewllery sets", "ladies watches", "bridal sets", "branded kara",
 ]);
 
 const jewellerySubcategoryHandles = new Set([

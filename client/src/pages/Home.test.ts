@@ -36,6 +36,7 @@ import Home, { isJewellerySubcategory } from "./Home";
 describe("Home", () => {
   it("keeps 1 CARAT JEWELLERY SETS inside the Jewellery chooser", () => {
     expect(isJewellerySubcategory({ name: "1 CARAT JEWELLERY SETS", productType: "1-carat-jewellery-sets" })).toBe(true);
+    expect(isJewellerySubcategory({ name: "1 CARAT JEWLLERY SETS", productType: "1-carat-jewellery-sets" })).toBe(true);
   });
 
   it("uses the user-supplied hero image while retaining category and editorial paths", () => {
